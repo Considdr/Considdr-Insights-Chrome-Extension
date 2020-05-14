@@ -21,9 +21,12 @@ if (fileSystem.existsSync(secretsPath)) {
 var options = {
   mode: process.env.NODE_ENV || "development",
   entry: {
-    popup: path.join(__dirname, "src", "js", "popup.js"),
-    options: path.join(__dirname, "src", "js", "options.js"),
-    background: path.join(__dirname, "src", "js", "background.js")
+    popup: path.join(__dirname, "src", "popup", "popup.js"),
+    background: path.join(__dirname, "src", "background", "background.js"),
+    highlight: path.join(__dirname, "src", "js", "highlight.js")
+  },
+  chromeExtensionBoilerplate: {
+    notHotReload: ["highlight"]
   },
   output: {
     path: path.join(__dirname, "build"),
@@ -34,12 +37,44 @@ var options = {
       {
         test: /\.css$/,
         loader: "style-loader!css-loader",
+        include: [
+          path.join(__dirname, 'src'),
+          /node_modules\/(semantic-ui-css)/
+        ],
+      },
+      {
+        test: /\.(scss|sass)$/i,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: {
+                localIdentName: "[path]___[name]__[local]___[hash:base64:5]",
+              }, 
+            }
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              plugins: function() {
+                return [require('autoprefixer')]
+              }
+            }
+          },
+          
+          'sass-loader'
+        ],
         exclude: /node_modules/
       },
       {
         test: new RegExp('\.(' + fileExtensions.join('|') + ')$'),
         loader: "file-loader?name=[name].[ext]",
-        exclude: /node_modules/
+        include: [
+          path.join(__dirname, 'src'),
+          /node_modules\/(semantic-ui-css)/
+        ],
       },
       {
         test: /\.html$/,
@@ -55,7 +90,11 @@ var options = {
   },
   resolve: {
     alias: alias,
-    extensions: fileExtensions.map(extension => ("." + extension)).concat([".jsx", ".js", ".css"])
+    extensions: fileExtensions.map(extension => ("." + extension)).concat([".jsx", ".js", ".css", ".sass"]),
+    modules: [
+      path.resolve(__dirname, 'src'),
+      'node_modules'
+    ]
   },
   plugins: [
     // clean the build folder
@@ -74,17 +113,12 @@ var options = {
       }
     }]),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "popup.html"),
+      template: path.join(__dirname, "src", "popup", "popup.html"),
       filename: "popup.html",
       chunks: ["popup"]
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "options.html"),
-      filename: "options.html",
-      chunks: ["options"]
-    }),
-    new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "background.html"),
+      template: path.join(__dirname, "src", "background", "background.html"),
       filename: "background.html",
       chunks: ["background"]
     }),

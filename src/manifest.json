@@ -1,6 +1,14 @@
 {
-  "name": "Chrome Extension Webpack",
-  "options_page": "options.html",
+  "name": "Considdr Insights",
+  "version": "1.0",
+  "description": "Automatically highlight key insights in an article.",
+  "permissions": [
+      "activeTab",
+      "tabs",
+      "cookies",
+      "http://*/*",
+      "https://*/*"
+  ],
   "background": {
     "page": "background.html"
   },

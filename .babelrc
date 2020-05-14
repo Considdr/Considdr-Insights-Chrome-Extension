@@ -3,6 +3,20 @@
     "@babel/react"
   ],
   "plugins": [
-    "react-hot-loader/babel"
+    ["@babel/plugin-proposal-class-properties", {
+      "loose": true
+    }],
+    "react-hot-loader/babel",
+    ["react-css-modules", {
+    	"webpackHotModuleReloading": true,
+			"filetypes": {
+			  ".sass": {
+			    "syntax": "sugarss",
+			    "plugins": [
+			    	"autoprefixer"
+			    ]
+			  }
+			}
+    }]
   ]
 }
