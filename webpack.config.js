@@ -23,7 +23,7 @@ var options = {
   entry: {
     popup: path.join(__dirname, "src", "popup", "popup.js"),
     background: path.join(__dirname, "src", "background", "background.js"),
-    highlight: path.join(__dirname, "src", "js", "highlight.js")
+    highlight: path.join(__dirname, "src", "js", "content_scripts", "highlight.js")
   },
   chromeExtensionBoilerplate: {
     notHotReload: ["highlight"]

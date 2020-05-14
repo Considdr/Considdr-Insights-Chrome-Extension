@@ -1,7 +1,7 @@
 {
-  "name": "Considdr Insights",
-  "version": "0.0.1",
-  "description": "Automatically highlight key insights in an article.",
+  "name": "considdr-insights",
+  "version": "1.0",
+  "description": "Automatically highlight key insights in an article",
   "scripts": {
     "build": "node utils/build.js",
     "start": "node utils/webserver.js"
