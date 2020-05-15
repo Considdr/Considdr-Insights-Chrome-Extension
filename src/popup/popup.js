@@ -1,10 +1,10 @@
-import SignIn from "components/auth/sign_in";
+import App from "components/App";
 import React from "react";
 import { render } from "react-dom";
 
 import 'semantic-ui-css/semantic.min.css'
 
 render(
-  <SignIn/>,
+  <App />,
   window.document.getElementById("popup")
 );
