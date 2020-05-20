@@ -5,17 +5,19 @@ import Content from "./content";
 
 class App extends React.Component {
 	render () {
-		const signedIn = true;
-
+		const signedIn = false;
+		let content
 		if (signedIn) {
-			return (
-			  <Content />
-			)
+			content = <Content />
+		} else {
+			content = <SignIn />
 		}
 
-	    return (
-	      <SignIn />
-	    )
+		return(
+			<div>
+				{content}
+			</div>
+		)
 	  }
 }
 
