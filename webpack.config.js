@@ -21,8 +21,8 @@ if (fileSystem.existsSync(secretsPath)) {
 var options = {
   mode: process.env.NODE_ENV || "development",
   entry: {
-    popup: path.join(__dirname, "src", "popup", "popup.js"),
-    background: path.join(__dirname, "src", "background", "background.js"),
+    popup: path.join(__dirname, "src", "js", "popup.js"),
+    background: path.join(__dirname, "src", "js", "background.js"),
     highlight: path.join(__dirname, "src", "js", "content_scripts", "highlight.js")
   },
   chromeExtensionBoilerplate: {
@@ -63,8 +63,16 @@ var options = {
               }
             }
           },
-          
-          'sass-loader'
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {
+                includePaths: [
+                  path.resolve(__dirname, '..', '..', 'src')
+                ]
+              }
+            }
+          }
         ],
         exclude: /node_modules/
       },
@@ -113,12 +121,12 @@ var options = {
       }
     }]),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "popup", "popup.html"),
+      template: path.join(__dirname, "src", "popup.html"),
       filename: "popup.html",
       chunks: ["popup"]
     }),
     new HtmlWebpackPlugin({
-      template: path.join(__dirname, "src", "background", "background.html"),
+      template: path.join(__dirname, "src", "background.html"),
       filename: "background.html",
       chunks: ["background"]
     }),

@@ -14,21 +14,21 @@ function setCookie(accessToken, expiresAt) {
 
 	//URL needs to be https to set secure true
 
-	chrome.cookies.set({
-		url: "https://localhost:8888",
-		name: "accessToken",
-		value: accessToken,
-		secure: true,
-		httpOnly: true,
-		expirationDate: expiresAt
-	});
+	// chrome.cookies.set({
+	// 	url: "https://localhost:8888",
+	// 	name: "accessToken",
+	// 	value: accessToken,
+	// 	secure: true,
+	// 	httpOnly: true,
+	// 	expirationDate: expiresAt
+	// });
 
-	chrome.cookies.get({
-		url: "https://localhost:8888",
-		name: "accessToken"
-	}, function(cookie) {
-		console.log(cookie);
-	});
+	// chrome.cookies.get({
+	// 	url: "https://localhost:8888",
+	// 	name: "accessToken"
+	// }, function(cookie) {
+	// 	console.log(cookie);
+	// });
 }
 
 setCookie(accessToken, expiresAt);
