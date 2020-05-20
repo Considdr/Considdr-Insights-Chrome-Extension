@@ -1,5 +1,4 @@
 import React from "react"
-import icon from "images/icon-128.png"
 import { hot } from "react-hot-loader"
 
 import styles from "../../../../styles/popup.sass"
@@ -9,10 +8,13 @@ import { Form, Button } from 'semantic-ui-react'
 class SignIn extends React.Component {
   constructor(props) {
     super(props)
-    this.state = { email: '', password: '' }
+
+    this.state = { email: '', password: '', name: '' }
   }
 
   handleFormChange = (e, {name, value }) => {
+    console.log(name, value)
+
     this.setState({ [name]: value })
   }
 
@@ -33,7 +35,7 @@ class SignIn extends React.Component {
   }
 
   render () {
-    const { email, password } = this.state
+    const { email, password, name } = this.state
 
     return (
       <div>
@@ -43,6 +45,10 @@ class SignIn extends React.Component {
       			<label>Email</label>
       			<Form.Input type='email' placeholder='Email' name='email' value={email} onChange={this.handleFormChange}/>
       		</Form.Field>
+          <Form.Field>
+            <label>Password</label>
+            <Form.Input type='password' placeholder='Password' name='password' value={password} onChange={this.handleFormChange}/>
+          </Form.Field>
           <Button type='submit'> Sign In </Button>
       	</Form>
       </div>
