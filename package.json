@@ -4,7 +4,7 @@
   "description": "Automatically highlight key insights in an article",
   "scripts": {
     "build": "node utils/build.js",
-    "start": "node utils/webserver.js"
+    "start": "NODE_ENV=development node utils/webserver.js"
   },
   "dependencies": {
     "autoprefixer": "^9.7.6",

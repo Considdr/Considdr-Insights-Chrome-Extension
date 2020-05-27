@@ -5,50 +5,47 @@ import styles from "../../../../styles/popup.sass"
 
 import { Form, Button } from 'semantic-ui-react'
 
+import secrets from "secrets";
+
 class SignIn extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = { email: '', password: '', name: '' }
+    this.state = { email: secrets.email, password: secrets.password }
   }
 
-  handleFormChange = (e, {name, value }) => {
-    console.log(name, value)
-
+  handleChange = (e, { name, value }) => {
     this.setState({ [name]: value })
   }
 
   submitForm = (e) => {
-    let accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo0MywiZXhwIjoxNTg5MzI2MTg1fQ.K-d7TvAZssPh3ePq1VaemBWoJqvfEs2m67jx-GXqBhY";
-    let expiresAt = 1689326185;
-
-    chrome.cookies.set({
-      url: "https://localhost:8888",
-      name: "accessToken",
-      value: accessToken,
-      secure: true,
-      httpOnly: true,
-      expirationDate: expiresAt
-    });
-
     e.preventDefault()
+
+    const { auth } = this.props
+    const { email, password } = this.state
+
+    if (email === '' || password === '') {
+      return
+    }
+
+    auth.signIn(email, password)
   }
 
   render () {
-    const { email, password, name } = this.state
+    const { email, password } = this.state
 
     return (
       <div>
       	<Form styleName="styles.formWrapper" onSubmit = {this.submitForm}>
-      		<h3> Sign in </h3>
-      		<Form.Field>
-      			<label>Email</label>
-      			<Form.Input type='email' placeholder='Email' name='email' value={email} onChange={this.handleFormChange}/>
-      		</Form.Field>
+      		<h3> Sign In </h3>
           <Form.Field>
-            <label>Password</label>
-            <Form.Input type='password' placeholder='Password' name='password' value={password} onChange={this.handleFormChange}/>
+            <Form.Input label="Email" type="email" placeholder='Email' name='email' value={email} onChange={this.handleChange}/>
           </Form.Field>
+          <Form.Field>
+            <Form.Input label="Password" type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
+          </Form.Field>
+          <Form.Input/>
+          <Form.Input/>
           <Button type='submit'> Sign In </Button>
       	</Form>
       </div>
