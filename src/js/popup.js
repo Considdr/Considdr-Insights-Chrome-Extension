@@ -2,12 +2,20 @@ import App from "js/popup/components/App"
 import React from "react"
 import { render } from "react-dom"
 
+import wretch from "wretch";
+import secrets from "secrets";
+
 import 'semantic-ui-css/semantic.min.css'
 
-import { Auth } from "./popup/utils"
+import { Auth } from "./popup/stores"
+
+const endpoint = wretch()
+  .url(secrets.apiEndpoint)
+  .options({ credentials: "include", mode: "cors" })
 
 const resources = {
-	auth: new Auth()
+  endpoint,
+  auth: new Auth(endpoint)
 }
 
 render(

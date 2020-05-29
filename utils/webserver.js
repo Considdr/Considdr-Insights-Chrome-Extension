@@ -32,7 +32,10 @@ var server =
     headers: {
       "Access-Control-Allow-Origin": "*"
     },
-    disableHostCheck: true
+    disableHostCheck: true,
+    proxy: {
+      '/v1': 'http://localhost:8888'
+    }
   });
 
 server.listen(env.PORT);

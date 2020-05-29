@@ -1,13 +1,19 @@
 import React from "react";
+import { observer } from 'mobx-react'
 
 import SignIn from "./auth/sign_in";
 import Content from "./content";
 
+@observer
 class App extends React.Component {
-	render () {
-		const { auth } = this.props
+	constructor(props) {
+		super(props)
+	}
 
-		const signedIn = false;
+	render () {
+    const { auth } = this.props
+		const signedIn = auth.signedIn
+
 		let content
 		if (signedIn) {
 			content = <Content {...this.props}/>
@@ -20,7 +26,7 @@ class App extends React.Component {
 				{content}
 			</div>
 		)
-	  }
+  }
 }
 
 export default App

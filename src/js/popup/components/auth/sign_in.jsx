@@ -28,10 +28,15 @@ class SignIn extends React.Component {
       return
     }
 
-    auth.signIn(email, password)
+    auth.signIn(email, password, {
+      success: () => { console.log("SUCCESS") },
+      error: () => { console.log("ERROR") }
+    })
   }
 
   render () {
+    const { auth } = this.props
+    const { isLoading } = auth
     const { email, password } = this.state
 
     return (
@@ -46,7 +51,7 @@ class SignIn extends React.Component {
           </Form.Field>
           <Form.Input/>
           <Form.Input/>
-          <Button type='submit'> Sign In </Button>
+          <Button type='submit' loading={isLoading}> Sign In </Button>
       	</Form>
       </div>
     )
