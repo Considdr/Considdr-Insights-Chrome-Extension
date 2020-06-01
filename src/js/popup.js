@@ -1,4 +1,4 @@
-import App from "js/popup/components/App"
+import App from "js/popup/layouts/app"
 import React from "react"
 import { render } from "react-dom"
 

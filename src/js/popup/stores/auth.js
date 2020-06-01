@@ -35,24 +35,6 @@ class Auth {
 	signOut() {
 		this.setSignedIn(false)
 	}
-
-	// validate() {
-	// 	var signedIn = true
-
-	// 	chrome.cookies.get({
-	// 	  url: "https://localhost:8888",
-	// 	  name: "accessToken"
-	// 	  }, function(cookie) {
-	// 	    if (cookie) {
-	// 	    	console.log(cookie)
-	// 	    	signedIn = true
-	// 	    } else {
-	// 	    	signedIn = false
-	// 	    }
-	// 	});
-
-	// 	return signedIn
-	// }
 }
 
 export default Auth

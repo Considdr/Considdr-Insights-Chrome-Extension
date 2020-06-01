@@ -1,8 +1,11 @@
 import React from "react";
 
+import { inject } from 'mobx-react'
+
 import { Button } from 'semantic-ui-react'
 
-class Content extends React.Component {
+@inject('auth')
+export default class Content extends React.Component {
 	signOut = (e) => {
 		e.preventDefault();
 
@@ -22,5 +25,3 @@ class Content extends React.Component {
 		)
 	}
 }
-
-export default Content;

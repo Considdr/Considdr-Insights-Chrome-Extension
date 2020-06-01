@@ -1,13 +1,13 @@
 import React from "react"
-import { hot } from "react-hot-loader"
 
-import styles from "../../../../styles/popup.sass"
+import { inject } from 'mobx-react'
 
 import { Form, Button } from 'semantic-ui-react'
 
 import secrets from "secrets";
 
-class SignIn extends React.Component {
+@inject('auth')
+export default class SignIn extends React.Component {
   constructor(props) {
     super(props)
 
@@ -41,7 +41,7 @@ class SignIn extends React.Component {
 
     return (
       <div>
-      	<Form styleName="styles.formWrapper" onSubmit = {this.submitForm}>
+      	<Form onSubmit = {this.submitForm}>
       		<h3> Sign In </h3>
           <Form.Field>
             <Form.Input label="Email" type="email" placeholder='Email' name='email' value={email} onChange={this.handleChange}/>
@@ -57,5 +57,3 @@ class SignIn extends React.Component {
     )
   }
 }
-
-export default hot(module)(SignIn)
