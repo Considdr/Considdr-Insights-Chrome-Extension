@@ -2,8 +2,14 @@ import { observable, action, computed } from 'mobx'
 import secrets from "secrets";
 
 class Auth {
-	@observable signedIn = false
 	@observable isLoading = false
+
+	@observable currentUser = {}
+	@observable signedIn = false
+
+	constructor(api) {
+		this.api = api
+	}
 
 	@action setIsLoading(status) {
 		this.isLoading = status
@@ -13,11 +19,24 @@ class Auth {
 		this.signedIn = status
 	}
 
-	constructor(api) {
-		this.api = api
+	@action setCurrentUser(body) {
+		this.setSignedIn(true)
+		this.currentUser = body.data.user
 	}
 
-	signIn(email, password, callback) {
+	validate() {
+		this.setIsLoading(true)
+
+		this.api
+			.url("/auth/sessions")
+			.get()
+			.json(json => {
+				this.setCurrentUser(json)
+				this.setIsLoading(false)
+			})
+	}
+
+	signIn(email, password) {
 		this.setIsLoading(true)
 
 		this.api
@@ -26,9 +45,9 @@ class Auth {
 				email: email,
 				password: password
 			})
-			.res(() => {
+			.json(json => {
+				this.setCurrentUser(json)
 				this.setIsLoading(false)
-				this.setSignedIn(true)
 			})
 	}
 

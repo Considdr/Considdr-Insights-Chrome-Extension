@@ -28,10 +28,7 @@ export default class SignIn extends React.Component {
       return
     }
 
-    auth.signIn(email, password, {
-      success: () => { console.log("SUCCESS") },
-      error: () => { console.log("ERROR") }
-    })
+    auth.signIn(email, password)
   }
 
   render () {

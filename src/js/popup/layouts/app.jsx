@@ -10,6 +10,11 @@ export default class App extends React.Component {
 		super(props)
 	}
 
+	componentDidMount() {
+		const { auth } = this.props
+		auth.validate()
+	}
+
 	render () {
     	const { auth } = this.props
 		const signedIn = auth.signedIn
