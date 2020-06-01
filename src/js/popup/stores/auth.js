@@ -1,7 +1,6 @@
-import { observable, action, computed } from 'mobx'
-import secrets from "secrets";
+import { observable, action } from 'mobx'
 
-class Auth {
+export default class Auth {
 	@observable isLoading = false
 
 	@observable currentUser = {}
@@ -19,9 +18,14 @@ class Auth {
 		this.signedIn = status
 	}
 
-	@action setCurrentUser(body) {
+	@action signInUser(body) {
 		this.setSignedIn(true)
 		this.currentUser = body.data.user
+	}
+
+	@action signOutUser() {
+		this.setSignedIn(false)
+		this.currentUser = {}
 	}
 
 	validate() {
@@ -31,8 +35,11 @@ class Auth {
 			.url("/auth/sessions")
 			.get()
 			.json(json => {
-				this.setCurrentUser(json)
+				this.signInUser(json)
 				this.setIsLoading(false)
+			})
+			.catch(() => {
+				this.signOutUser()
 			})
 	}
 
@@ -46,14 +53,17 @@ class Auth {
 				password: password
 			})
 			.json(json => {
-				this.setCurrentUser(json)
+				this.signInUser(json)
 				this.setIsLoading(false)
 			})
 	}
 
 	signOut() {
-		this.setSignedIn(false)
+		this.api
+			.url("/auth/sessions")
+			.delete()
+			.res(() => {
+				this.signOutUser()
+			})
 	}
 }
-
-export default Auth
