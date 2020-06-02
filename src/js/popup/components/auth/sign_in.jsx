@@ -1,12 +1,14 @@
 import React from "react"
 
-import { inject } from 'mobx-react'
+import { observer, inject } from 'mobx-react'
+
+import Layout from "js/popup/layouts/layout"
 
 import { Form, Button } from 'semantic-ui-react'
 
 import secrets from "secrets";
 
-@inject('auth')
+@inject('auth') @observer
 export default class SignIn extends React.Component {
   constructor(props) {
     super(props)
@@ -37,7 +39,7 @@ export default class SignIn extends React.Component {
     const { email, password } = this.state
 
     return (
-      <div>
+      <Layout>
       	<Form onSubmit = {this.submitForm}>
       		<h3> Sign In </h3>
           <Form.Field>
@@ -50,7 +52,7 @@ export default class SignIn extends React.Component {
           <Form.Input/>
           <Button type='submit' loading={isLoading}> Sign In </Button>
       	</Form>
-      </div>
+      </Layout>
     )
   }
 }
