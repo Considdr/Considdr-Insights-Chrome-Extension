@@ -11,7 +11,6 @@ import { Auth } from "./popup/stores"
 
 const endpoint = wretch()
   .url(secrets.apiEndpoint)
-  .options({ credentials: "include", mode: "cors" })
 
 const resources = {
   endpoint,
