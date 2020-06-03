@@ -16,8 +16,14 @@ export default class App extends React.Component {
 	}
 
 	render () {
-    	const { auth } = this.props
-		const signedIn = auth.signedIn
+		const { auth } = this.props
+		const { signedIn, isLoading } = auth
+
+		if (isLoading) {
+			return (
+				<div> Loading now now... </div>
+			)
+		}
 
 		let content
 		if (signedIn) {

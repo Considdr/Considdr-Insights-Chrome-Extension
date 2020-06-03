@@ -50,7 +50,7 @@ export default class SignIn extends React.Component {
           </Form.Field>
           <Form.Input/>
           <Form.Input/>
-          <Button type='submit' loading={isLoading}> Sign In </Button>
+          <Button type='submit'> Sign In </Button>
       	</Form>
       </Layout>
     )
