@@ -41,7 +41,7 @@ function highlightInsights(insights) {
 		var element = findInsight(insight);
 
 		if (element === undefined || element.get().length === 0) {
-			// console.log("NOT FOUND");
+			console.log("NOT FOUND");
 			return;
 		}
 
@@ -58,21 +58,28 @@ function highlightInsights(insights) {
 }
 
 function findInsight(insight) {
-	var element = $(`*:contains(${insight})`).last();
+	var element = findInsightElement(insight)
 
 	if ($(element).length) {
 		return element;
 	}
 
-	insight = insight.replace("\'", "’");
+	insight = insight.replace("\'", "’")
+	insight = insight.replace(/"([^"]*)"/g, "“$1”")
+	insight = insight.replace("\"", "“")
+	insight = insight.replace("--", "—")
 
-	element = $(`*:contains(${insight})`).last();
-
+	element = findInsightElement(insight)
+	
 	if ($(element).length) {
 		return element;
 	} else {
-		return;
+		return
 	}
+}
+
+function findInsightElement(insight) {
+	return $(`*:contains(${insight})`).last()
 }
 
 function highlightInsight(element, insight) {
