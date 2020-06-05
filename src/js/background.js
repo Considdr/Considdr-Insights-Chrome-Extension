@@ -1,24 +1,35 @@
 import 'images/icon-128.png'
 import 'images/icon-34.png'
 
+import * as highlightsRepository from 'js/repositories/highlights'
 import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
 
 function highlight () {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        var activeTab = tabs[0]
 
-        console.log(tabs[0].id)
+        if (!activeTab) {
+            return
+        }
 
-        var activeTabId = tabs[0].id;
-        window.chrome.tabs.executeScript(activeTabId, {
-            file: "highlight.bundle.js"
+        var activeTabId = tabs[0].id
+
+        chrome.tabs.executeScript(activeTabId, {
+            code: `var tabId = ${activeTabId}`
+        }, function() {
+            chrome.tabs.executeScript(activeTabId, {file: 'highlight.bundle.js'});
         });
     })
 }
 
-function setBadgeCount (numInsights) {
+function setBadge (numInsights) {
+    if (!numInsights) {
+        return
+    }
+
     clearBadge()
 
-    let color = "#2d84de"
+    var color = "#2d84de"
 
     window.chrome.browserAction.setBadgeBackgroundColor({
         color: color
@@ -29,20 +40,74 @@ function setBadgeCount (numInsights) {
     })
 }
 
+function storeInsightCount(requestData) {
+    if (!requestData) {
+        return
+    }
+
+    var tabId = requestData.tabId
+    var numInsights = requestData.numInsights
+
+    if (!tabId || !numInsights) {
+        return
+    }
+
+    highlightsRepository.persist(tabId, numInsights)
+}
+
 function clearBadge () {
     window.chrome.browserAction.setBadgeText({ text: '' })
 }
 
-window.chrome.runtime.onMessage.addListener(request => {
+function highlightedPage(requestData) {
+    storeInsightCount(requestData)
+    setBadge(requestData.numInsights)
+}
+
+function updateBadge(tabId) {
+    var numInsights = highlightsRepository.get(tabId)
+
+    if (!numInsights) {
+        clearBadge()
+    }
+
+    setBadge(numInsights)
+}
+
+window.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === runtimeEventsTypes.HIGHLIGHT) {
         highlight()
     }
 
-    if (request.type === runtimeEventsTypes.SET_BADGE_COUNT) {
-        if (!request.data || !request.data.numInsights) {
+    if (request.type === runtimeEventsTypes.HIGHLIGHTED_PAGE) {
+        var requestData = request.data
+
+        if (!requestData) {
             return
         }
 
-        setBadgeCount(request.data.numInsights)
+        highlightedPage(requestData)
     }
+})
+
+window.chrome.tabs.onActivated.addListener(function(activeInfo) {
+    updateBadge(activeInfo.tabId)
+});
+
+window.chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+    highlightsRepository.remove(tabId)
+})
+
+window.chrome.windows.onFocusChanged.addListener(function() {
+    window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        var activeTab = tabs[0]
+
+        if (!activeTab) {
+            return
+        }
+
+        var activeTabId = tabs[0].id
+
+        updateBadge(activeTabId)
+    })
 })

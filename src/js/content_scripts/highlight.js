@@ -25,13 +25,9 @@ function getInsights(url) {
 }
 
 function processResult(response) {
-	console.log("HERE")
-
 	if (!response["data"] || !response["data"]["insights"]) {
 		return;
 	}
-
-	console.log("PROCESSING")
 
 	let insights = response["data"]["insights"].map(item => item.name);
 	highlightInsights(insights);
@@ -45,7 +41,7 @@ function highlightInsights(insights) {
 		var element = findInsight(insight);
 
 		if (element === undefined || element.get().length === 0) {
-			console.log("NOT FOUND");
+			// console.log("NOT FOUND");
 			return;
 		}
 
@@ -58,7 +54,7 @@ function highlightInsights(insights) {
 	    font_weight: null
 	});
 
-	runtimeEvents.setBadgeCount(numInsights)
+	runtimeEvents.highlightedPage(tabId, numInsights)
 }
 
 function findInsight(insight) {
@@ -99,4 +95,4 @@ function main() {
 	getInsights(url);
 }
 
-main();
+main()

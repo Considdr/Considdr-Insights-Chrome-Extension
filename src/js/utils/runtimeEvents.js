@@ -6,10 +6,11 @@ export function highlight () {
 	})
 }
 
-export function setBadgeCount (numInsights) {
+export function highlightedPage (tabId, numInsights) {
 	window.chrome.runtime.sendMessage({
-		type: runtimeEventsTypes.SET_BADGE_COUNT,
+		type: runtimeEventsTypes.HIGHLIGHTED_PAGE,
 		data: {
+			tabId: tabId,
 			numInsights: numInsights
 		}
 	})
