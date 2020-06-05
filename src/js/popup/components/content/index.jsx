@@ -6,23 +6,22 @@ import Layout from "js/popup/layouts/layout"
 
 import { Button } from 'semantic-ui-react'
 
+import * as runtimeEvents from 'js/utils/runtimeEvents'
+
 @inject('auth')
 export default class Content extends React.Component {
 	signOut = (e) => {
 		e.preventDefault();
-
+		
 		const { auth } = this.props;
-
 		auth.signOut();
 	}
 
 	highlight = () => {
-		// window.chrome.tabs.executeScript(null, {file: "content_scripts/highlight.js"});
+		runtimeEvents.highlight()
 	}
 
 	render() {
-		const { auth } = this.props
-
 		return (
 			<Layout>
 				<h1> CONTENT </h1>

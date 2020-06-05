@@ -11,6 +11,7 @@ import { Auth } from "./popup/stores"
 
 const endpoint = wretch()
   .url(secrets.apiEndpoint)
+  .accept("application/json")
 
 const resources = {
   endpoint,

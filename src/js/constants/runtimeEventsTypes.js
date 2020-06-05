@@ -1,0 +1,2 @@
+export const HIGHLIGHT = 'HIGHLIGHT'
+export const SET_BADGE_COUNT = 'SET_BADGE_COUNT'

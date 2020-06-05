@@ -1,33 +1,27 @@
-import $ from 'jquery';
-import markerAnimation from 'jquery.marker-animation'
+import wretch from "wretch";
+import secrets from "secrets";
 
-const apiEndpoint = "http://localhost:8888/v1/get_work_insights";
+import $ from 'jquery';
+import 'jquery.marker-animation'
+
+import * as runtimeEvents from 'js/utils/runtimeEvents'
+
+const endpoint = wretch()
+  .url(secrets.apiEndpoint)
 
 function getInsights(url) {
-	var endpoint = buildRequest(url);
-	fetchInsights(endpoint);
-}
-
-function fetchInsights(endpoint) {
-	fetch(endpoint)
-	.then(validateResponse)
-	.then(readResponseAsJSON)
-	.then(processResult)
-	.catch(function(error) {
-		console.log('Looks like there was a problem: \n', error);
-	});
-}
-
-function validateResponse(response) {
-	if (!response.ok) {
-		throw Error(response.statusText);
-	}
-
-	return response;
-}
-
-function readResponseAsJSON(response) {
-	return response.json();
+	endpoint
+		.url("/get_work_insights")
+		.query({
+			work_url: url
+		})
+		.get()
+		.json(json => {
+			processResult(json)
+		})
+		.catch(error => {
+			console.log('Looks like there was a problem: \n', error);
+		})
 }
 
 function processResult(response) {
@@ -44,6 +38,8 @@ function processResult(response) {
 }
 
 function highlightInsights(insights) {
+	let numInsights = 0
+
 	insights.forEach(function(insight) {
 		console.log(insight);
 		var element = findInsight(insight);
@@ -52,6 +48,8 @@ function highlightInsights(insights) {
 			console.log("NOT FOUND");
 			return;
 		}
+
+		numInsights++
 		
 		highlightInsight(element, insight);
 	});
@@ -59,6 +57,26 @@ function highlightInsights(insights) {
 	$('.marker-animation').markerAnimation({
 	    font_weight: null
 	});
+
+	runtimeEvents.setBadgeCount(numInsights)
+}
+
+function findInsight(insight) {
+	var element = $(`*:contains(${insight})`).last();
+
+	if ($(element).length) {
+		return element;
+	}
+
+	insight = insight.replace("\'", "’");
+
+	element = $(`*:contains(${insight})`).last();
+
+	if ($(element).length) {
+		return element;
+	} else {
+		return;
+	}
 }
 
 function highlightInsight(element, insight) {
@@ -81,32 +99,4 @@ function main() {
 	getInsights(url);
 }
 
-function buildRequest(url) {
-	var endpoint = new URL(apiEndpoint);
-	endpoint.searchParams.append("work_url", url);
-
-	return endpoint;
-}
-
-function findInsight(insight) {
-	var element = $(`*:contains(${insight})`).last();
-
-	if ($(element).length) {
-		return element;
-	}
-
-	insight = insight.replace("\'", "’");
-
-	element = $(`*:contains(${insight})`).last();
-
-	if ($(element).length) {
-		return element;
-	} else {
-		return;
-	}
-
-}
-
 main();
-
-

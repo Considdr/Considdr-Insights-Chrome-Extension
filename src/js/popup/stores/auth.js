@@ -40,6 +40,7 @@ export default class Auth {
 			})
 			.catch(() => {
 				this.signOutUser()
+				this.setIsLoading(false)
 			})
 	}
 
@@ -48,6 +49,7 @@ export default class Auth {
 
 		this.api
 			.url("/auth/sessions")
+			.content("application/json")
 			.post({
 				email: email,
 				password: password
@@ -59,11 +61,14 @@ export default class Auth {
 	}
 
 	signOut() {
+		this.setIsLoading(true)
+
 		this.api
 			.url("/auth/sessions")
 			.delete()
 			.res(() => {
 				this.signOutUser()
+				this.setIsLoading(false)
 			})
 	}
 }
