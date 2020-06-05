@@ -20,7 +20,7 @@ function getInsights(url) {
 			processResult(json)
 		})
 		.catch(error => {
-			console.log('Looks like there was a problem: \n', error);
+			runtimeEvents.highlightedPage(tabId, 0)
 		})
 }
 

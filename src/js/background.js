@@ -8,11 +8,11 @@ function highlight () {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         var activeTab = tabs[0]
 
-        if (!activeTab) {
+        if (!activeTab || activeTab.url.includes("chrome://")) {
             return
         }
 
-        var activeTabId = tabs[0].id
+        var activeTabId = activeTab.id
 
         chrome.tabs.executeScript(activeTabId, {
             code: `var tabId = ${activeTabId}`
@@ -23,7 +23,7 @@ function highlight () {
 }
 
 function setBadge (numInsights) {
-    if (!numInsights) {
+    if (numInsights === undefined) {
         return
     }
 
@@ -48,7 +48,7 @@ function storeInsightCount(requestData) {
     var tabId = requestData.tabId
     var numInsights = requestData.numInsights
 
-    if (!tabId || !numInsights) {
+    if (tabId === undefined || numInsights === undefined) {
         return
     }
 

@@ -7,8 +7,6 @@ export function persist (tabId, numInsights) {
 }
 
 export function get (tabId) {
-    console.log(tabId)
-
     let highlights = JSON.parse(window.sessionStorage.getItem('highlights')) || {}
 
     if (tabId in highlights) {
