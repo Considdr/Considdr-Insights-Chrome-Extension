@@ -6,13 +6,13 @@ import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
 
 function highlight () {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var activeTab = tabs[0]
+        const activeTab = tabs[0]
 
         if (!activeTab || activeTab.url.includes("chrome://")) {
             return
         }
 
-        var activeTabId = activeTab.id
+        const activeTabId = activeTab.id
 
         chrome.tabs.executeScript(activeTabId, {
             code: `var tabId = ${activeTabId}`
@@ -29,7 +29,7 @@ function setBadge (numInsights) {
 
     clearBadge()
 
-    var color = "#2d84de"
+    const color = "#2d84de"
 
     window.chrome.browserAction.setBadgeBackgroundColor({
         color: color
@@ -45,8 +45,8 @@ function storeInsightCount(requestData) {
         return
     }
 
-    var tabId = requestData.tabId
-    var numInsights = requestData.numInsights
+    const tabId = requestData.tabId
+    const numInsights = requestData.numInsights
 
     if (tabId === undefined || numInsights === undefined) {
         return
@@ -65,7 +65,7 @@ function highlightedPage(requestData) {
 }
 
 function updateBadge(tabId) {
-    var numInsights = highlightsRepository.get(tabId)
+    const numInsights = highlightsRepository.get(tabId)
 
     if (!numInsights) {
         clearBadge()
@@ -80,7 +80,7 @@ window.chrome.runtime.onMessage.addListener(function(request, sender, sendRespon
     }
 
     if (request.type === runtimeEventsTypes.HIGHLIGHTED_PAGE) {
-        var requestData = request.data
+        const requestData = request.data
 
         if (!requestData) {
             return
@@ -98,15 +98,20 @@ window.chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
     highlightsRepository.remove(tabId)
 })
 
+window.chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
+    highlightsRepository.remove(tabId)
+    clearBadge()
+})
+
 window.chrome.windows.onFocusChanged.addListener(function() {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var activeTab = tabs[0]
+        const activeTab = tabs[0]
 
         if (!activeTab) {
             return
         }
 
-        var activeTabId = tabs[0].id
+        const activeTabId = tabs[0].id
 
         updateBadge(activeTabId)
     })
