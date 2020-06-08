@@ -34,21 +34,16 @@ function processResult(response) {
 }
 
 function highlightInsights(insights) {
-	let numInsights = 0
-
-	// insights = insights.splice(0,1)
-
-	// console.log(insights)
+	var numInsights = 0
 
 	insights.forEach(function(insight) {
 		var element
 
 		[element, insight] = findInsight(insight)
 
-		console.log(insight)
+		// console.log(insight)
 
 		if (element === undefined || element.get().length === 0) {
-			console.log("NOT FOUND");
 			return;
 		}
 
@@ -100,8 +95,6 @@ function constructInsightHTML(element, insight) {
 	const elementText = element.text()
 	var startIndex, endIndex, indicies
 
-	console.log(elementText)
-
 	try {
 		indicies = getIndicies(elementHTML, elementText, insight)
 	}
@@ -114,10 +107,6 @@ function constructInsightHTML(element, insight) {
 	}
 
 	[startIndex, endIndex] = indicies
-
-	if (startIndex == -1 || endIndex == -1) {
-		return
-	}
 
 	const highlightedHTML = elementHTML.slice(0, startIndex) + "<div class=\"marker-animation\">"
 		+ elementHTML.slice(startIndex, endIndex) + "</div>" + elementHTML.slice(endIndex)
@@ -139,9 +128,6 @@ function getIndicies(elementHTML, elementText, insight) {
 
 	var startIndex = nthIndex(elementHTML, insightStartWord, startWordCount + 1)
 	var endIndex = nthIndex(elementHTML, insightEndWord, endWordCount) + insightEndWord.length
-
-	console.log(startIndex)
-	console.log(endIndex)
 
 	if (startIndex == -1 || endIndex == -1) {
 		return
