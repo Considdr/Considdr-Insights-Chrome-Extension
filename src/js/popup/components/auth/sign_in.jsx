@@ -8,6 +8,8 @@ import { Form, Button } from 'semantic-ui-react'
 
 import secrets from "secrets";
 
+import styles from "styles/components/auth/sign_in"
+
 @inject('auth') @observer
 export default class SignIn extends React.Component {
   constructor(props) {

@@ -6,6 +6,8 @@ import Loading from "popup/components/loading"
 import SignIn from "popup/components/auth/sign_in";
 import Content from "popup/components/content";
 
+import 'styles/layouts/app.sass'
+
 @observer
 export default class App extends React.Component {
 	constructor(props) {
@@ -36,7 +38,9 @@ export default class App extends React.Component {
 
 		return(
 			<Provider {...this.props}>
-				{content}
+				<div styleName='app'>
+					{content}
+				</div>
 			</Provider>
 		)
 	}

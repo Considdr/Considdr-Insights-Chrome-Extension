@@ -9,7 +9,8 @@
     ["module-resolver", {
       "root": "./src",
       "alias": {
-        "popup": "./src/js/popup"
+        "popup": "./src/js/popup",
+        "styles": "./src/styles"
       }
     }],
     ["@babel/plugin-proposal-class-properties", {

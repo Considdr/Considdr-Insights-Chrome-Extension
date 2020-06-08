@@ -1,10 +1,11 @@
 import React from "react"
-import { hot } from "react-hot-loader"
+
+import 'styles/layouts/layout.sass'
 
 export default class Layout extends React.Component {
     render() {
         return (
-            <div>
+            <div styleName='layout'>
                 { this.props.children }
             </div>
         )
