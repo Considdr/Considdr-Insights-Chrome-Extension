@@ -1,5 +1,5 @@
 import App from './app'
 
-export default {
+export {
     App
 }

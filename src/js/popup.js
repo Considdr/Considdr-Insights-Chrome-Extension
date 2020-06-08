@@ -1,13 +1,13 @@
-import App from "js/popup/layouts/app"
 import React from "react"
 import { render } from "react-dom"
 
 import wretch from "wretch";
 import secrets from "secrets";
 
-import 'semantic-ui-css/semantic.min.css'
+import { App } from "popup/layouts"
+import { Auth } from "popup/stores"
 
-import { Auth } from "./popup/stores"
+import 'semantic-ui-css/semantic.min.css'
 
 const endpoint = wretch()
   .url(secrets.apiEndpoint)

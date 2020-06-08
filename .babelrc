@@ -3,7 +3,15 @@
     "@babel/react"
   ],
   "plugins": [
-    ["@babel/plugin-proposal-decorators", { "legacy": true }],
+    ["@babel/plugin-proposal-decorators", {
+      "legacy": true
+    }],
+    ["module-resolver", {
+      "root": "./src",
+      "alias": {
+        "popup": "./src/js/popup"
+      }
+    }],
     ["@babel/plugin-proposal-class-properties", {
       "loose": true
     }],

@@ -1,8 +1,10 @@
 import React from "react";
 import { Provider, observer } from 'mobx-react'
 
-import SignIn from "../components/auth/sign_in";
-import Content from "../components/content";
+import Loading from "popup/components/loading"
+
+import SignIn from "popup/components/auth/sign_in";
+import Content from "popup/components/content";
 
 @observer
 export default class App extends React.Component {
@@ -21,7 +23,7 @@ export default class App extends React.Component {
 
 		if (isLoading) {
 			return (
-				<div> Loading now now... </div>
+				<Loading/>
 			)
 		}
 

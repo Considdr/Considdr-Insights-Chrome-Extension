@@ -98,11 +98,7 @@ var options = {
   },
   resolve: {
     alias: alias,
-    extensions: fileExtensions.map(extension => ("." + extension)).concat([".jsx", ".js", ".css", ".sass"]),
-    modules: [
-      path.resolve(__dirname, 'src'),
-      'node_modules'
-    ]
+    extensions: fileExtensions.map(extension => ("." + extension)).concat([".jsx", ".js", ".css", ".sass"])
   },
   plugins: [
     // clean the build folder
