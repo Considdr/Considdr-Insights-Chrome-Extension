@@ -99,6 +99,8 @@ window.chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 })
 
 window.chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
+    console.log(tabId)
+
     highlightsRepository.remove(tabId)
     clearBadge()
 })

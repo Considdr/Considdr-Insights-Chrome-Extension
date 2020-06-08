@@ -21,5 +21,6 @@ export function remove (tabId) {
 
     if (tabId in highlights) {
         delete highlights[tabId]
+        window.sessionStorage.setItem('highlights', JSON.stringify(highlights))
     }
 }
