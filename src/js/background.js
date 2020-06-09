@@ -1,5 +1,7 @@
-import 'images/icon-128.png'
+import 'images/icon-16.png'
 import 'images/icon-34.png'
+import 'images/icon-48.png'
+import 'images/icon-128.png'
 
 import * as highlightsRepository from 'js/repositories/highlights'
 import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'

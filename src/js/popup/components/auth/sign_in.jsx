@@ -8,7 +8,7 @@ import { Image, Form, Button } from 'semantic-ui-react'
 
 import secrets from "secrets";
 
-import logo from "images/logo.png"
+import banner from "images/banner.png"
 
 import styles from "styles/components/auth/sign_in.sass"
 import buttons from "styles/buttons.sass"
@@ -45,7 +45,7 @@ export default class SignIn extends React.Component {
 
     return (
       <Layout>
-        <Image src={logo}/>
+        <Image src={banner}/>
       	<Form onSubmit = {this.submitForm} styleName="styles.signInForm">
           <Form.Field>
             <Form.Input label="Email" type="email" placeholder='Email' name='email' value={email} onChange={this.handleChange}/>

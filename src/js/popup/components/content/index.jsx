@@ -6,11 +6,12 @@ import Layout from "js/popup/layouts/layout"
 import Highlight from "./highlight"
 import Insights from "./insights"
 
-import { Image, Button } from 'semantic-ui-react'
+import { List, Image, Button } from 'semantic-ui-react'
 
 import Loading from "popup/components/loading"
 
-import logo from "images/logo.png"
+import banner from "images/banner.png"
+import logo from "images/icon-128.png"
 
 import * as highlightsRepository from 'js/repositories/highlights'
 
@@ -22,13 +23,6 @@ export default class Content extends React.Component {
 		this.state = { isLoading: true, numInsights: undefined }
 	}
 
-	signOut = (e) => {
-		e.preventDefault();
-		
-		const { auth } = this.props;
-		auth.signOut();
-	}
-
 	componentDidMount() {
 		window.chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
 			const activeTab = tabs[0]
@@ -36,6 +30,21 @@ export default class Content extends React.Component {
 				this.updateNumInsights(highlightsRepository.get(activeTab.id))
 			}
 		})
+	}
+
+	goToConsiddr = (e) => {
+		e.preventDefault();
+
+		chrome.tabs.update({
+			url: "https://www.considdr.com/"
+	   });
+	}
+
+	signOut = (e) => {
+		e.preventDefault();
+		
+		const { auth } = this.props;
+		auth.signOut();
 	}
 
 	updateNumInsights = (numInsights) => {
@@ -60,9 +69,13 @@ export default class Content extends React.Component {
 	render() {
 		return (
 			<Layout>
-				<Image src={logo}/>
+				<Image src={banner}/>
 				{ this.renderHighlightState() }
-				<Button onClick={this.signOut}> Sign Out</Button>
+
+				<List bulleted horizontal>
+					<List.Item as='a' onClick={this.goToConsiddr}>Considdr.com</List.Item>
+					<List.Item as='a' onClick={this.signOut}>Sign Out</List.Item>
+				</List>
 			</Layout>
 		)
 	}
