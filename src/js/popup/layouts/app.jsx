@@ -19,7 +19,7 @@ export default class App extends React.Component {
 		auth.validate()
 	}
 
-	renderAppContent() {
+	renderApp() {
 		const { auth } = this.props
 		const { signedIn, isLoading } = auth
 		
@@ -37,7 +37,7 @@ export default class App extends React.Component {
 		return(
 			<Provider {...this.props}>
 				<div id="Application" styleName='app'>
-					{ this.renderAppContent() }
+					{ this.renderApp() }
 				</div>
 			</Provider>
 		)

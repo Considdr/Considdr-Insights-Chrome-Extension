@@ -3,13 +3,25 @@ import React from "react";
 import { inject } from 'mobx-react'
 
 import Layout from "js/popup/layouts/layout"
+import Highlight from "./highlight"
+import Insights from "./insights"
 
-import { Button } from 'semantic-ui-react'
+import { Image, Button } from 'semantic-ui-react'
 
-import * as runtimeEvents from 'js/utils/runtimeEvents'
+import Loading from "popup/components/loading"
+
+import logo from "images/logo.png"
+
+import * as highlightsRepository from 'js/repositories/highlights'
 
 @inject('auth')
 export default class Content extends React.Component {
+	constructor(props) {
+		super(props)
+
+		this.state = { isLoading: true, numInsights: undefined }
+	}
+
 	signOut = (e) => {
 		e.preventDefault();
 		
@@ -17,16 +29,39 @@ export default class Content extends React.Component {
 		auth.signOut();
 	}
 
-	highlight = () => {
-		runtimeEvents.highlight()
+	componentDidMount() {
+		window.chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+			const activeTab = tabs[0]
+			if (activeTab) {
+				this.updateNumInsights(highlightsRepository.get(activeTab.id))
+			}
+		})
+	}
+
+	updateNumInsights = (numInsights) => {
+		this.setState({
+			isLoading: false,
+			numInsights: numInsights
+		});
+	}
+
+	renderHighlightState() {
+		const { isLoading, numInsights } = this.state
+		
+		if (isLoading) return <Loading/>
+
+		if (numInsights !== undefined) {
+			return <Insights numInsights={numInsights}/>
+		}
+
+		return <Highlight/>
 	}
 
 	render() {
 		return (
 			<Layout>
-				<h1> CONTENT </h1>
-				<Button onClick={this.highlight}> Highlight</Button>
-				<hr/>
+				<Image src={logo}/>
+				{ this.renderHighlightState() }
 				<Button onClick={this.signOut}> Sign Out</Button>
 			</Layout>
 		)

@@ -1,13 +1,17 @@
 export function persist (tabId, numInsights) {
-    let highlights = JSON.parse(window.sessionStorage.getItem('highlights')) || {}
+    let highlights = JSON.parse(localStorage.getItem('highlights')) || {}
 
     highlights[tabId] = numInsights
 
-    window.sessionStorage.setItem('highlights', JSON.stringify(highlights))
+    localStorage.setItem('highlights', JSON.stringify(highlights))
 }
 
 export function get (tabId) {
-    let highlights = JSON.parse(window.sessionStorage.getItem('highlights')) || {}
+    console.log(tabId)
+
+    let highlights = JSON.parse(localStorage.getItem('highlights')) || {}
+
+    console.log(highlights)
 
     if (tabId in highlights) {
         return highlights[tabId]
@@ -17,10 +21,10 @@ export function get (tabId) {
 }
 
 export function remove (tabId) {
-    let highlights = JSON.parse(window.sessionStorage.getItem('highlights')) || {}
+    let highlights = JSON.parse(localStorage.getItem('highlights')) || {}
 
     if (tabId in highlights) {
         delete highlights[tabId]
-        window.sessionStorage.setItem('highlights', JSON.stringify(highlights))
+        localStorage.setItem('highlights', JSON.stringify(highlights))
     }
 }

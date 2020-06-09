@@ -90,6 +90,8 @@ window.chrome.runtime.onMessage.addListener(function(request, sender, sendRespon
 })
 
 window.chrome.tabs.onActivated.addListener(function(activeInfo) {
+    console.log(activeInfo.tabId)
+
     updateBadge(activeInfo.tabId)
 });
 
@@ -98,8 +100,6 @@ window.chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 })
 
 window.chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
-    console.log(tabId)
-
     highlightsRepository.remove(tabId)
     clearBadge()
 })
@@ -112,8 +112,6 @@ window.chrome.windows.onFocusChanged.addListener(function() {
             return
         }
 
-        const activeTabId = tabs[0].id
-
-        updateBadge(activeTabId)
+        updateBadge(activeTab.id)
     })
 })
