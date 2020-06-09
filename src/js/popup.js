@@ -1,8 +1,8 @@
 import React from "react"
 import { render } from "react-dom"
 
-import wretch from "wretch";
-import secrets from "secrets";
+import wretch from "wretch"
+import secrets from "secrets"
 
 import { App } from "popup/layouts"
 import { Auth } from "popup/stores"
