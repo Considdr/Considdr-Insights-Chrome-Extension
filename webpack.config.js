@@ -12,10 +12,19 @@ var alias = {};
 
 var secretsPath = path.join(__dirname, "config", "secrets", ("secrets." + process.env.APP_ENV + ".js"));
 
-var fileExtensions = ["jpg", "jpeg", "png", "gif", "eot", "otf", "svg", "ttf", "woff", "woff2"];
-
 if (fileSystem.existsSync(secretsPath)) {
   alias["secrets"] = secretsPath;
+}
+
+var fileExtensions = ["jpg", "jpeg", "png", "gif", "eot", "otf", "svg", "ttf", "woff", "woff2"];
+
+const loadersPath = path.join(__dirname, "config", "loaders")
+const loaders = {
+  css: require(path.join(loadersPath, "css")),
+  sass: require(path.join(loadersPath, "sass")),
+  assets: require(path.join(loadersPath, "assets")),
+  html: require(path.join(loadersPath, "html")),
+  babel: require(path.join(loadersPath, "babel"))
 }
 
 var options = {
@@ -34,66 +43,11 @@ var options = {
   },
   module: {
     rules: [
-      {
-        test: /\.css$/,
-        loader: "style-loader!css-loader",
-        include: [
-          path.join(__dirname, 'src'),
-          /node_modules\/(semantic-ui-css)/
-        ],
-      },
-      {
-        test: /\.(scss|sass)$/i,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              modules: {
-                localIdentName: "[path]___[name]__[local]___[hash:base64:5]",
-              }, 
-            }
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: function() {
-                return [require('autoprefixer')]
-              }
-            }
-          },
-          {
-            loader: 'sass-loader',
-            options: {
-              sassOptions: {
-                includePaths: [
-                  path.resolve(__dirname, '..', '..', 'src')
-                ]
-              }
-            }
-          }
-        ],
-        exclude: /node_modules/
-      },
-      {
-        test: new RegExp('\.(' + fileExtensions.join('|') + ')$'),
-        loader: "file-loader?name=[name].[ext]",
-        include: [
-          path.join(__dirname, 'src'),
-          /node_modules\/(semantic-ui-css)/
-        ],
-      },
-      {
-        test: /\.html$/,
-        loader: "html-loader",
-        exclude: /node_modules/
-      },
-      {
-        test: /\.(js|jsx)$/,
-        loader: "babel-loader",
-        exclude: /node_modules/
-      }
+      loaders.css,
+      loaders.sass,
+      loaders.assets,
+      loaders.html,
+      loaders.babel
     ]
   },
   resolve: {

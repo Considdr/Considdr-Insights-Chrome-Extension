@@ -75,18 +75,17 @@ function updateBadge(tabId) {
 }
 
 window.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.type === runtimeEventsTypes.HIGHLIGHT) {
-        highlight()
-    }
-
-    if (request.type === runtimeEventsTypes.HIGHLIGHTED_PAGE) {
-        const requestData = request.data
-
-        if (!requestData) {
-            return
-        }
-
-        highlightedPage(requestData)
+    switch(request.type) {
+        case runtimeEventsTypes.HIGHLIGHT:
+            highlight()
+            break
+        case runtimeEventsTypes.HIGHLIGHTED_PAGE:
+            const requestData = request.data
+            if (!requestData) {
+                return
+            }
+            highlightedPage(requestData)
+            break
     }
 })
 

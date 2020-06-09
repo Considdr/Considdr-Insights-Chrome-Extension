@@ -50,8 +50,6 @@ export default class SignIn extends React.Component {
           <Form.Field>
             <Form.Input label="Password" type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
           </Form.Field>
-          <Form.Input/>
-          <Form.Input/>
           <Button type='submit'> Sign In </Button>
       	</Form>
       </Layout>
