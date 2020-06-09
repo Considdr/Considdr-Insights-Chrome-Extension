@@ -19,27 +19,25 @@ export default class App extends React.Component {
 		auth.validate()
 	}
 
-	render () {
+	renderAppContent() {
 		const { auth } = this.props
 		const { signedIn, isLoading } = auth
-
-		if (isLoading) {
-			return (
-				<Loading/>
-			)
-		}
+		
+		if (isLoading) return <Loading/>
 
 		let content
 		if (signedIn) {
-			content = <Content/>
+			return <Content/>
 		} else {
-			content = <SignIn/>
+			return <SignIn/>
 		}
+	}
 
+	render () {
 		return(
 			<Provider {...this.props}>
-				<div styleName='app'>
-					{content}
+				<div id="Application" styleName='app'>
+					{ this.renderAppContent() }
 				</div>
 			</Provider>
 		)

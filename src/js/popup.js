@@ -8,6 +8,7 @@ import { App } from "popup/layouts"
 import { Auth } from "popup/stores"
 
 import 'semantic-ui-css/semantic.min.css'
+import 'styles/layouts/app.sass'
 
 const endpoint = wretch()
   .url(secrets.apiEndpoint)

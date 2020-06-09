@@ -10,7 +10,8 @@
       "root": "./src",
       "alias": {
         "popup": "./src/js/popup",
-        "styles": "./src/styles"
+        "styles": "./src/styles",
+        "images": "./src/images"
       }
     }],
     ["@babel/plugin-proposal-class-properties", {
