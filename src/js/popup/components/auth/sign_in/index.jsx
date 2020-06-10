@@ -4,7 +4,7 @@ import { observer, inject } from 'mobx-react'
 
 import Layout from "js/popup/layouts/layout"
 
-import { Form, Button } from 'semantic-ui-react'
+import { Form, Button, Message } from 'semantic-ui-react'
 
 import secrets from "secrets";
 
@@ -30,6 +30,7 @@ export default class SignIn extends React.Component {
     const { email, password } = this.state
 
     if (email === '' || password === '') {
+      auth.handleError("empty_fields")
       return
     }
 
@@ -38,18 +39,23 @@ export default class SignIn extends React.Component {
 
   render () {
     const { auth } = this.props
-    const { isLoading } = auth
+    const { message } = auth
+
     const { email, password } = this.state
 
     return (
       <Layout>
-      	<Form onSubmit = {this.submitForm} styleName="styles.signInForm">
+      	<Form onSubmit = {this.submitForm} styleName="styles.signInForm" error>
           <Form.Field>
             <Form.Input fluid icon='user' iconPosition='left' type="email" placeholder='Email' name='email' value={email} onChange={this.handleChange}/>
           </Form.Field>
           <Form.Field>
             <Form.Input fluid icon='lock' iconPosition='left' type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
           </Form.Field>
+            {
+              message &&
+                <Message error size='tiny' header="Error" content={message.body}/>
+            }
           <Button type='submit' styleName="buttons.base"> Sign In </Button>
       	</Form>
       </Layout>

@@ -1,10 +1,14 @@
 import { observable, action } from 'mobx'
 
+import t from "./locale";
+
 export default class Auth {
 	@observable isLoading = false
 
 	@observable currentUser = {}
 	@observable signedIn = false
+
+	@observable message = null
 
 	constructor(api) {
 		this.api = api
@@ -18,16 +22,33 @@ export default class Auth {
 		this.signedIn = status
 	}
 
+	@action setMessage(message) {
+		this.message = message
+	}
+
 	@action signInUser(body) {
 		this.setSignedIn(true)
 		this.currentUser = body.data.user
+		this.setMessage(null)
 		this.setIsLoading(false)
 	}
 
 	@action signOutUser() {
 		this.setSignedIn(false)
 		this.currentUser = {}
+		this.setMessage(null)
 		this.setIsLoading(false)
+	}
+
+	@action handleError(message) {
+		this.setMessage({
+			body: t(message),
+			type: "error"
+		})
+
+		this.setIsLoading(false)
+
+		console.log("YO")
 	}
 
 	validate() {
@@ -56,6 +77,10 @@ export default class Auth {
 			})
 			.json(json => {
 				this.signInUser(json)
+			})
+			.catch(error => {
+				const errorMessage = JSON.parse(error.message).data.error
+				this.handleError(errorMessage)
 			})
 	}
 

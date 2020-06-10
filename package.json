@@ -10,6 +10,7 @@
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.10.1",
     "autoprefixer": "^9.7.6",
+    "fronto-localize": "^1.0.2",
     "jquery": "^3.5.1",
     "jquery.marker-animation": "^1.4.22",
     "mobx": "^5.15.4",
