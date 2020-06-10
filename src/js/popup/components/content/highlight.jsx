@@ -1,16 +1,14 @@
 import React from 'react'
 
-import * as runtimeEvents from 'js/utils/runtimeEvents'
-
 import { Button } from 'semantic-ui-react'
 
-const Highlight = () => {
-    const highlight = () => {
-        runtimeEvents.highlight()
-    }
+import buttons from "styles/buttons.sass"
+
+const Highlight = (props) => {
+    const { highlight } = props
 
     return(
-        <Button onClick={highlight}> Highlight</Button>
+        <Button onClick={ highlight } styleName="buttons.base"> Highlight Insights </Button>
     )  
 }
 

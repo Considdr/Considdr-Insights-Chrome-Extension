@@ -7,11 +7,7 @@ export function persist (tabId, numInsights) {
 }
 
 export function get (tabId) {
-    console.log(tabId)
-
     let highlights = JSON.parse(localStorage.getItem('highlights')) || {}
-
-    console.log(highlights)
 
     if (tabId in highlights) {
         return highlights[tabId]

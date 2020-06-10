@@ -4,11 +4,9 @@ import { observer, inject } from 'mobx-react'
 
 import Layout from "js/popup/layouts/layout"
 
-import { Image, Form, Button } from 'semantic-ui-react'
+import { Form, Button } from 'semantic-ui-react'
 
 import secrets from "secrets";
-
-import banner from "images/banner.png"
 
 import styles from "styles/components/auth/sign_in.sass"
 import buttons from "styles/buttons.sass"
@@ -45,13 +43,12 @@ export default class SignIn extends React.Component {
 
     return (
       <Layout>
-        <Image src={banner}/>
       	<Form onSubmit = {this.submitForm} styleName="styles.signInForm">
           <Form.Field>
-            <Form.Input label="Email" type="email" placeholder='Email' name='email' value={email} onChange={this.handleChange}/>
+            <Form.Input fluid icon='user' iconPosition='left' type="email" placeholder='Email' name='email' value={email} onChange={this.handleChange}/>
           </Form.Field>
           <Form.Field>
-            <Form.Input label="Password" type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
+            <Form.Input fluid icon='lock' iconPosition='left' type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
           </Form.Field>
           <Button type='submit' styleName="buttons.base"> Sign In </Button>
       	</Form>

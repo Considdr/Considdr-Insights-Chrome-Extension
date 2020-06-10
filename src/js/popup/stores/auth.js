@@ -21,11 +21,13 @@ export default class Auth {
 	@action signInUser(body) {
 		this.setSignedIn(true)
 		this.currentUser = body.data.user
+		this.setIsLoading(false)
 	}
 
 	@action signOutUser() {
 		this.setSignedIn(false)
 		this.currentUser = {}
+		this.setIsLoading(false)
 	}
 
 	validate() {
@@ -36,11 +38,9 @@ export default class Auth {
 			.get()
 			.json(json => {
 				this.signInUser(json)
-				this.setIsLoading(false)
 			})
 			.catch(() => {
 				this.signOutUser()
-				this.setIsLoading(false)
 			})
 	}
 
@@ -56,7 +56,6 @@ export default class Auth {
 			})
 			.json(json => {
 				this.signInUser(json)
-				this.setIsLoading(false)
 			})
 	}
 
@@ -68,7 +67,6 @@ export default class Auth {
 			.delete()
 			.res(() => {
 				this.signOutUser()
-				this.setIsLoading(false)
 			})
 	}
 }

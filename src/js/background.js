@@ -80,20 +80,22 @@ window.chrome.runtime.onMessage.addListener(function(request, sender, sendRespon
     switch(request.type) {
         case runtimeEventsTypes.HIGHLIGHT:
             highlight()
+            
             break
         case runtimeEventsTypes.HIGHLIGHTED_PAGE:
             const requestData = request.data
+
             if (!requestData) {
                 return
             }
+
             highlightedPage(requestData)
+
             break
     }
 })
 
 window.chrome.tabs.onActivated.addListener(function(activeInfo) {
-    console.log(activeInfo.tabId)
-
     updateBadge(activeInfo.tabId)
 });
 
