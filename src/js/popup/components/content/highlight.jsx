@@ -8,7 +8,11 @@ const Highlight = (props) => {
     const { highlight } = props
 
     return(
-        <Button onClick={ highlight } styleName="buttons.base"> Highlight Insights </Button>
+        <Button
+            onClick={ highlight }
+            styleName="buttons.base"
+            content="Highlight Insights"
+        />
     )  
 }
 

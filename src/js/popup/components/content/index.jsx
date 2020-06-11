@@ -6,8 +6,9 @@ import { extendObservable } from "mobx";
 import Layout from "js/popup/layouts/layout"
 import Highlight from "./highlight"
 import InsightCount from "./insightCount"
+import AutoHighlight from "./autoHighlight"
 
-import { List, Grid } from 'semantic-ui-react'
+import { List, Grid, Image } from 'semantic-ui-react'
 
 import Loading from "popup/components/loading"
 
@@ -92,11 +93,17 @@ export default class Content extends React.Component {
 						</div>
 					</Grid.Row>
 
-					<List bulleted horizontal styleName="footer">
-						<List.Item as='a' onClick={this.goToConsiddr}>Considdr.com</List.Item>
-						<List.Item as='a' onClick={this.signOut}>Sign Out</List.Item>
-					</List>
+					<Grid.Row>
+						<AutoHighlight/>
+					</Grid.Row>
 				</Grid>
+
+				<List bulleted horizontal styleName="footer">
+					<List.Item as='a' onClick={this.goToConsiddr}>
+						<Image avatar src={logo} />
+					</List.Item>
+					<List.Item as='a' onClick={this.signOut}>Sign Out</List.Item>
+				</List>
 			</Layout>
 		)
 	}

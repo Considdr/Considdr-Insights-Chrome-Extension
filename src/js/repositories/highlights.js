@@ -1,7 +1,5 @@
 export function persist (tabId, numInsights) {
-    console.log("PERSIST")
-
-    window.chrome.storage.local.get(['highlights'], function(data) {
+    window.chrome.storage.local.get('highlights', function(data) {
         var highlights = data.highlights
 
         if (!highlights) {
@@ -14,7 +12,7 @@ export function persist (tabId, numInsights) {
 }
 
 export function get (tabId, callback) {
-    window.chrome.storage.local.get(['highlights'], function(data) {
+    window.chrome.storage.local.get('highlights', function(data) {
         var highlights = data.highlights
 
         if (!highlights) {
@@ -26,7 +24,7 @@ export function get (tabId, callback) {
 }
 
 export function remove (tabId) {
-    window.chrome.storage.local.get(['highlights'], function(data) {
+    window.chrome.storage.local.get('highlights', function(data) {
         var highlights = data.highlights
 
         if (!highlights) {

@@ -3,25 +3,52 @@ import 'images/icon-34.png'
 import 'images/icon-48.png'
 import 'images/icon-128.png'
 
-import * as highlightsRepository from 'js/repositories/highlights'
+import wretch from "wretch"
+import secrets from "secrets"
+
 import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
 
-function highlight () {
+import * as highlightsRepository from 'js/repositories/highlights'
+import * as autoHighlightRepository from 'js/repositories/autoHighlight'
+
+const endpoint = wretch()
+  .url(secrets.apiEndpoint)
+
+const badgeColor = "#2d84de"
+
+const chromeRegex = new RegExp("chrome.*:\/\/")
+
+function manualHighlight () {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         const activeTab = tabs[0]
 
-        if (!activeTab || activeTab.url.includes("chrome://")) {
+        if (!activeTab || chromeRegex.test(activeTab.url)) {
             return
         }
 
-        const activeTabId = activeTab.id
-
-        chrome.tabs.executeScript(activeTabId, {
-            code: `var tabId = ${activeTabId}`
-        }, function() {
-            chrome.tabs.executeScript(activeTabId, {file: 'highlight.bundle.js'});
-        });
+        executeHighlight(activeTab.id)
     })
+}
+
+function autoHighlight(tabId) {
+    highlightsRepository.get(tabId, function(numInsights) {
+        if (!numInsights) {
+            executeHighlight(tabId)
+        } else {
+            setBadge(numInsights)
+        }
+    }) 
+}
+
+function executeHighlight(activeTabId) {
+    chrome.tabs.executeScript(activeTabId, {
+        code: `var tabId = ${activeTabId}`
+    }, function() {
+        chrome.tabs.executeScript(activeTabId, {
+            file: 'highlight.bundle.js'
+        }, ()=>void chrome.runtime.lastError
+        );
+    });
 }
 
 function setBadge (numInsights) {
@@ -31,10 +58,8 @@ function setBadge (numInsights) {
 
     clearBadge()
 
-    const color = "#2d84de"
-
     window.chrome.browserAction.setBadgeBackgroundColor({
-        color: color
+        color: badgeColor
     })
     
     window.chrome.browserAction.setBadgeText({
@@ -70,16 +95,16 @@ function updateBadge(tabId) {
     highlightsRepository.get(tabId, function(numInsights) {
         if (!numInsights) {
             clearBadge()
+        } else {
+            setBadge(numInsights)
         }
-    
-        setBadge(numInsights)
     }) 
 }
 
 window.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     switch(request.type) {
         case runtimeEventsTypes.HIGHLIGHT:
-            highlight()
+            manualHighlight()
             
             break
         case runtimeEventsTypes.HIGHLIGHTED_PAGE:
@@ -104,8 +129,22 @@ window.chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 })
 
 window.chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
+    if (!('url' in changeInfo)) {
+        return
+    }
+
     highlightsRepository.remove(tabId)
     clearBadge()
+
+    if (chromeRegex.test(changeInfo['url'])) {
+        return
+    }
+
+    autoHighlightRepository.get(function(status) {
+        if (status) {
+            autoHighlight(tabId)
+        }
+    })
 })
 
 window.chrome.windows.onFocusChanged.addListener(function() {

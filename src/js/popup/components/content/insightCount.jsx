@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Insights(props) {
+const InsightCount = (props) => {
     return (
         <div>
             <h2> {props.numInsights} </h2>
@@ -8,3 +8,5 @@ export default function Insights(props) {
         </div>
     )   
 }
+
+export default InsightCount

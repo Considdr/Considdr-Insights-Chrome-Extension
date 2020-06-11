@@ -47,8 +47,6 @@ export default class Auth {
 		})
 
 		this.setIsLoading(false)
-
-		console.log("YO")
 	}
 
 	validate() {
@@ -79,7 +77,14 @@ export default class Auth {
 				this.signInUser(json)
 			})
 			.catch(error => {
-				const errorMessage = JSON.parse(error.message).data.error
+				var errorMessage
+
+				try {
+					errorMessage = JSON.parse(error.message).data.error
+				} catch {
+					errorMessage = "server_error"
+				}
+
 				this.handleError(errorMessage)
 			})
 	}

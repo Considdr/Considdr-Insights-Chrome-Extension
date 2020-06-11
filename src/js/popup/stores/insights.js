@@ -1,10 +1,11 @@
 import { observable, action } from 'mobx'
 
 import * as runtimeEvents from 'js/utils/runtimeEvents'
+
 import * as highlightsRepository from 'js/repositories/highlights'
 
 export default class Insights {
-    @observable isLoading = false
+    @observable isLoading = true
     @observable numInsights = undefined
 
     @action setIsLoading(status) {
@@ -17,14 +18,17 @@ export default class Insights {
     }
 
     constructor() {
-        this.load()
+        this.init()
     }
     
-    load() {
+    init() {
         window.chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             const activeTab = tabs[0]
+
             if (activeTab) {
-                this.updateNumInsights(highlightsRepository.get(activeTab.id))
+                highlightsRepository.get(activeTab.id, (numInsights) => {
+                    this.updateNumInsights(numInsights)
+                })
             }
         })
     }
@@ -33,6 +37,4 @@ export default class Insights {
         this.setIsLoading(true)
         runtimeEvents.highlight()
     }
-
-
 }
