@@ -67,13 +67,13 @@ function highlightedPage(requestData) {
 }
 
 function updateBadge(tabId) {
-    const numInsights = highlightsRepository.get(tabId)
-
-    if (!numInsights) {
-        clearBadge()
-    }
-
-    setBadge(numInsights)
+    highlightsRepository.get(tabId, function(numInsights) {
+        if (!numInsights) {
+            clearBadge()
+        }
+    
+        setBadge(numInsights)
+    }) 
 }
 
 window.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

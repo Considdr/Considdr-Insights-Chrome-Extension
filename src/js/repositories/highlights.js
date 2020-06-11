@@ -1,26 +1,41 @@
 export function persist (tabId, numInsights) {
-    let highlights = JSON.parse(localStorage.getItem('highlights')) || {}
+    console.log("PERSIST")
 
-    highlights[tabId] = numInsights
+    window.chrome.storage.local.get(['highlights'], function(data) {
+        var highlights = data.highlights
 
-    localStorage.setItem('highlights', JSON.stringify(highlights))
+        if (!highlights) {
+            highlights = {}
+        }
+
+        highlights[tabId] = numInsights
+        window.chrome.storage.local.set({highlights: highlights})
+    })
 }
 
-export function get (tabId) {
-    let highlights = JSON.parse(localStorage.getItem('highlights')) || {}
+export function get (tabId, callback) {
+    window.chrome.storage.local.get(['highlights'], function(data) {
+        var highlights = data.highlights
 
-    if (tabId in highlights) {
-        return highlights[tabId]
-    } else {
-        return
-    }
+        if (!highlights) {
+            highlights = {}
+        }
+
+        callback && callback(highlights[tabId])
+    })
 }
 
 export function remove (tabId) {
-    let highlights = JSON.parse(localStorage.getItem('highlights')) || {}
+    window.chrome.storage.local.get(['highlights'], function(data) {
+        var highlights = data.highlights
 
-    if (tabId in highlights) {
-        delete highlights[tabId]
-        localStorage.setItem('highlights', JSON.stringify(highlights))
-    }
+        if (!highlights) {
+            highlights = {}
+        }
+
+        if (tabId in highlights) {
+            delete highlights[tabId]
+            window.chrome.storage.local.set({highlights: highlights})
+        }
+    })    
 }
