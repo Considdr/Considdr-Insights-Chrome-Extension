@@ -7,6 +7,7 @@ import wretch from "wretch"
 import secrets from "secrets"
 
 import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
+import * as runtimeEvents from 'js/utils/runtimeEvents'
 
 import * as highlightsRepository from 'js/repositories/highlights'
 import * as autoHighlightRepository from 'js/repositories/autoHighlight'
@@ -22,7 +23,12 @@ function manualHighlight () {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         const activeTab = tabs[0]
 
-        if (!activeTab || chromeRegex.test(activeTab.url)) {
+        if (!activeTab) {
+            return
+        }
+
+        if (chromeRegex.test(activeTab.url)) {
+            runtimeEvents.updateInsights()
             return
         }
 
@@ -72,13 +78,8 @@ function clearBadge () {
 }
 
 function updateBadge(tabURL) {
-    if (chromeRegex.test(tabURL)) {
-        clearBadge()
-        return
-    }
-
     highlightsRepository.getInsightCount(tabURL, function(numInsights) {
-        if (!numInsights) {
+        if (numInsights === null) {
             clearBadge()
         } else {
             setBadge(numInsights)
@@ -100,6 +101,7 @@ window.chrome.runtime.onMessage.addListener(function(request, sender, sendRespon
             }
 
             updateBadge(requestData.tabURL)
+            runtimeEvents.updateInsights()
 
             break
         case runtimeEventsTypes.SIGN_OUT:
@@ -153,5 +155,5 @@ window.chrome.windows.onFocusChanged.addListener(function() {
 })
 
 window.chrome.runtime.onStartup.addListener(function() {
-    highlightsRepository.sift()
+    highlightsRepository.clearUnaccessed()
 })

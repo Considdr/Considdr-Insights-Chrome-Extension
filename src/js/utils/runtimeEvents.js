@@ -15,6 +15,12 @@ export function highlightedPage (tabURL) {
 	})
 }
 
+export function updateInsights() {
+	window.chrome.runtime.sendMessage({
+		type: runtimeEventsTypes.UPDATE_INSIGHTS
+	})
+}
+
 export function signOut () {
 	window.chrome.runtime.sendMessage({
 		type: runtimeEventsTypes.SIGN_OUT

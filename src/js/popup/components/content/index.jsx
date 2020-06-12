@@ -8,13 +8,10 @@ import { Insights } from 'popup/stores'
 import Layout from "popup/layouts/layout"
 import InsightsDisplay from "./insightsDisplay"
 import AutoHighlight from "./autoHighlight"
-import Footer from "./footer"
 
 import { Grid } from 'semantic-ui-react'
 
 import Loading from "popup/components/loading"
-
-import "styles/components/content/index.sass"
 
 import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
 
@@ -30,26 +27,10 @@ export default class Content extends React.Component {
 
 	componentDidMount() {
 		window.chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-			if (request.type == runtimeEventsTypes.HIGHLIGHTED_PAGE) {
-				const requestData = request.data
-				if (!requestData) {
-					return
-				}
-
+			if (request.type == runtimeEventsTypes.UPDATE_INSIGHTS) {
 				this.insights.init()
 			}
 		})
-	}
-
-	goToConsiddr = () => {
-		window.chrome.tabs.update({
-			url: "https://www.considdr.com/"
-	   });
-	}
-
-	signOut = () => {		
-		const { auth } = this.props;
-		auth.signOut();
 	}
 
 	highlight = () => {
@@ -76,8 +57,6 @@ export default class Content extends React.Component {
 						<AutoHighlight/>
 					</Grid.Row>
 				</Grid>
-
-				<Footer goToConsiddr={this.goToConsiddr} signOut={this.signOut}/>
 			</Layout>
 		)
 	}

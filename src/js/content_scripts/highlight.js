@@ -11,36 +11,30 @@ import * as highlightsRepository from 'js/repositories/highlights'
 const endpoint = wretch()
   .url(secrets.apiEndpoint)
 
-  highlightsRepository.getInsightCount(tabURL, function(numInsights) {
-	if (!numInsights) {
-		clearBadge()
-	} else {
-		setBadge(numInsights)
-	}
-})
-
 function highlight() {
 	highlightsRepository.getInsights(tabURL, function(validInsights) {
 		if (validInsights == undefined) {
-			getInsights(tabURL)
+			getInsights()
 		} else {
 			highlightInsights(validInsights)
 		}
 	})
 }
 
-function getInsights(url) {
+function getInsights() {
 	endpoint
 		.url("/get_work_insights")
 		.query({
-			work_url: url
+			work_url: tabURL
 		})
 		.get()
 		.json(json => {
 			processResult(json)
 		})
 		.catch(() => {
-			runtimeEvents.highlightedPage(url)
+			highlightsRepository.persist(tabURL, [], function() {
+				runtimeEvents.highlightedPage(tabURL)
+			})
 		})
 }
 
@@ -64,6 +58,7 @@ function highlightInsights(insights) {
 		// console.log(insight)
 
 		if (element === undefined || element.get().length === 0) {
+			// console.log("NOT FOUND")
 			return;
 		}
 
@@ -81,6 +76,9 @@ function highlightInsights(insights) {
 		font_weight: null,
 		color: "#99dbff"
 	});
+
+	console.log("VALID INSIGHTS")
+	console.log(validInsights)
 
 	highlightsRepository.persist(tabURL, validInsights, function() {
 		runtimeEvents.highlightedPage(tabURL)

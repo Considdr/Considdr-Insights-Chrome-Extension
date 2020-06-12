@@ -27,6 +27,8 @@ export default class Insights {
 
             if (activeTab) {
                 highlightsRepository.getInsightCount(activeTab.url, (numInsights) => {
+                    console.log(numInsights)
+
                     this.updateNumInsights(numInsights)
                 })
             }
