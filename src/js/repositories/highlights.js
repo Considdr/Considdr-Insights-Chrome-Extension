@@ -1,19 +1,3 @@
-/* 
-
-CHANGE STORE OBJECT
-
-DO FOLLOWING:
-
-url: {
-    insights: [],
-    numInsights: ###,
-    lastAccessed: ###
-}
-
-*/
-
-import { keys } from "mobx"
-
 export function persist (url, validInsights, callback) {
     window.chrome.storage.local.get('highlights', function(data) {
         var highlights

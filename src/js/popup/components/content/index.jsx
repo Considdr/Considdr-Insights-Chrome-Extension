@@ -3,22 +3,21 @@ import React from "react";
 import { inject, observer } from 'mobx-react'
 import { extendObservable } from "mobx";
 
-import Layout from "js/popup/layouts/layout"
-import Highlight from "./highlight"
-import InsightCount from "./insightCount"
-import AutoHighlight from "./autoHighlight"
+import { Insights } from 'popup/stores'
 
-import { List, Grid, Image } from 'semantic-ui-react'
+import Layout from "popup/layouts/layout"
+import InsightsDisplay from "./insightsDisplay"
+import AutoHighlight from "./autoHighlight"
+import Footer from "./footer"
+
+import { Grid } from 'semantic-ui-react'
 
 import Loading from "popup/components/loading"
-
-import logo from "images/icon-128.png"
 
 import "styles/components/content/index.sass"
 
 import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
 
-import { Insights } from 'popup/stores'
 
 @inject('auth') @observer
 export default class Content extends React.Component {
@@ -43,19 +42,19 @@ export default class Content extends React.Component {
 		})
 	}
 
-	goToConsiddr = (e) => {
-		e.preventDefault();
-
+	goToConsiddr = () => {
 		window.chrome.tabs.update({
 			url: "https://www.considdr.com/"
 	   });
 	}
 
-	signOut = (e) => {
-		e.preventDefault();
-		
+	signOut = () => {		
 		const { auth } = this.props;
 		auth.signOut();
+	}
+
+	highlight = () => {
+		this.insights.highlight()
 	}
 
 	renderHighlightState() {
@@ -63,14 +62,7 @@ export default class Content extends React.Component {
 		
 		if (isLoading) return <Loading label={"Looking for insights..."}/>
 
-		if (numInsights === null) return <Highlight highlight={this.highlight}/>
-
-		return <InsightCount numInsights={numInsights}/>
-	}
-
-	highlight = (e) => {
-		e.preventDefault();
-		this.insights.highlight()
+		return <InsightsDisplay numInsights={numInsights} highlight={this.highlight}/>
 	}
 
 	render() {
@@ -78,9 +70,7 @@ export default class Content extends React.Component {
 			<Layout>
 				<Grid centered padded="vertically">
 					<Grid.Row>
-						<div>
-							{ this.renderHighlightState() }
-						</div>
+						{ this.renderHighlightState() }
 					</Grid.Row>
 
 					<Grid.Row>
@@ -88,12 +78,7 @@ export default class Content extends React.Component {
 					</Grid.Row>
 				</Grid>
 
-				<List bulleted horizontal styleName="footer">
-					<List.Item as='a' onClick={this.goToConsiddr}>
-						<Image avatar src={logo} />
-					</List.Item>
-					<List.Item as='a' onClick={this.signOut}>Sign Out</List.Item>
-				</List>
+				<Footer goToConsiddr={this.goToConsiddr} signOut={this.signOut}/>
 			</Layout>
 		)
 	}
