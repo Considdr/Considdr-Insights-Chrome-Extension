@@ -38,17 +38,9 @@ export default class Content extends React.Component {
 					return
 				}
 
-				this.updateInsightCount(requestData.numInsights)
+				this.insights.init()
 			}
 		})
-	}
-
-	updateInsightCount(numInsights) {
-		if (numInsights === undefined) {
-			numInsights = 0
-		}
-
-		this.insights.updateNumInsights(numInsights)
 	}
 
 	goToConsiddr = (e) => {
@@ -71,11 +63,9 @@ export default class Content extends React.Component {
 		
 		if (isLoading) return <Loading label={"Looking for insights..."}/>
 
-		if (numInsights !== undefined) {
-			return <InsightCount numInsights={numInsights}/>
-		}
+		if (numInsights === null) return <Highlight highlight={this.highlight}/>
 
-		return <Highlight highlight={this.highlight}/>
+		return <InsightCount numInsights={numInsights}/>
 	}
 
 	highlight = (e) => {

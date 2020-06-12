@@ -6,7 +6,7 @@ import * as highlightsRepository from 'js/repositories/highlights'
 
 export default class Insights {
     @observable isLoading = true
-    @observable numInsights = undefined
+    @observable numInsights = null
 
     @action setIsLoading(status) {
         this.isLoading = status
@@ -26,7 +26,7 @@ export default class Insights {
             const activeTab = tabs[0]
 
             if (activeTab) {
-                highlightsRepository.get(activeTab.id, (numInsights) => {
+                highlightsRepository.getInsightCount(activeTab.url, (numInsights) => {
                     this.updateNumInsights(numInsights)
                 })
             }

@@ -1,2 +1,3 @@
 export const HIGHLIGHT = 'HIGHLIGHT'
 export const HIGHLIGHTED_PAGE = 'HIGHLIGHTED_PAGE'
+export const SIGN_OUT = 'SIGN_OUT'

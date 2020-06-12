@@ -1,5 +1,7 @@
 import { observable, action } from 'mobx'
 
+import * as runtimeEvents from 'js/utils/runtimeEvents'
+
 import t from "./locale";
 
 export default class Auth {
@@ -38,6 +40,8 @@ export default class Auth {
 		this.currentUser = {}
 		this.setMessage(null)
 		this.setIsLoading(false)
+
+		runtimeEvents.signOut()
 	}
 
 	@action handleError(message) {

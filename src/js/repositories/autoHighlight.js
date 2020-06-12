@@ -9,3 +9,7 @@ export function get (callback) {
         callback && callback(data.autoHighlight)
     })
 }
+
+export function clear () {
+    window.chrome.storage.local.remove('autoHighlight')
+}

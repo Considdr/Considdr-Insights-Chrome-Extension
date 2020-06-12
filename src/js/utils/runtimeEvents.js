@@ -6,12 +6,17 @@ export function highlight () {
 	})
 }
 
-export function highlightedPage (tabId, numInsights) {
+export function highlightedPage (tabURL) {
 	window.chrome.runtime.sendMessage({
 		type: runtimeEventsTypes.HIGHLIGHTED_PAGE,
 		data: {
-			tabId: tabId,
-			numInsights: numInsights
+			tabURL: tabURL
 		}
+	})
+}
+
+export function signOut () {
+	window.chrome.runtime.sendMessage({
+		type: runtimeEventsTypes.SIGN_OUT
 	})
 }

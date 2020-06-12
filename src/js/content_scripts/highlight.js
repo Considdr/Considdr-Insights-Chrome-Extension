@@ -6,8 +6,28 @@ import 'jquery.marker-animation'
 
 import * as runtimeEvents from 'js/utils/runtimeEvents'
 
+import * as highlightsRepository from 'js/repositories/highlights'
+
 const endpoint = wretch()
   .url(secrets.apiEndpoint)
+
+  highlightsRepository.getInsightCount(tabURL, function(numInsights) {
+	if (!numInsights) {
+		clearBadge()
+	} else {
+		setBadge(numInsights)
+	}
+})
+
+function highlight() {
+	highlightsRepository.getInsights(tabURL, function(validInsights) {
+		if (validInsights == undefined) {
+			getInsights(tabURL)
+		} else {
+			highlightInsights(validInsights)
+		}
+	})
+}
 
 function getInsights(url) {
 	endpoint
@@ -19,8 +39,8 @@ function getInsights(url) {
 		.json(json => {
 			processResult(json)
 		})
-		.catch(error => {
-			runtimeEvents.highlightedPage(tabId, 0)
+		.catch(() => {
+			runtimeEvents.highlightedPage(url)
 		})
 }
 
@@ -34,7 +54,7 @@ function processResult(response) {
 }
 
 function highlightInsights(insights) {
-	var numInsights = 0
+	var validInsights = []
 
 	insights.forEach(function(insight) {
 		var element
@@ -49,7 +69,7 @@ function highlightInsights(insights) {
 
 		try {
 			if (highlightInsight(element, insight)) {
-				numInsights++
+				validInsights.push(insight)
 			}
 		}
 		catch {
@@ -62,7 +82,9 @@ function highlightInsights(insights) {
 		color: "#99dbff"
 	});
 
-	runtimeEvents.highlightedPage(tabId, numInsights)
+	highlightsRepository.persist(tabURL, validInsights, function() {
+		runtimeEvents.highlightedPage(tabURL)
+	})
 }
 
 function findInsight(insight) {
@@ -203,9 +225,4 @@ function highlightInsight(element, insight) {
 	return false
 }
 
-function main() {
-	let url = window.location.toString();
-	getInsights(url);
-}
-
-main()
+highlight()

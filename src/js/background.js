@@ -26,25 +26,25 @@ function manualHighlight () {
             return
         }
 
-        executeHighlight(activeTab.id)
+        highlight(activeTab.id, activeTab.url)
     })
 }
 
-function autoHighlight(tabId) {
-    highlightsRepository.get(tabId, function(numInsights) {
-        if (!numInsights) {
-            executeHighlight(tabId)
-        } else {
-            setBadge(numInsights)
-        }
-    }) 
+function autoHighlight(tabID, tabURL) {
+    endpoint
+        .url("/auth/sessions")
+        .get()
+        .res(() => {
+            highlight(tabID, tabURL)
+        })
+        .catch(() => {})
 }
 
-function executeHighlight(activeTabId) {
-    chrome.tabs.executeScript(activeTabId, {
-        code: `var tabId = ${activeTabId}`
+function highlight(tabID, tabURL) {
+    chrome.tabs.executeScript(tabID, {
+        code: `var tabURL = "${tabURL}"`
     }, function() {
-        chrome.tabs.executeScript(activeTabId, {
+        chrome.tabs.executeScript(tabID, {
             file: 'highlight.bundle.js'
         }, ()=>void chrome.runtime.lastError
         );
@@ -52,7 +52,7 @@ function executeHighlight(activeTabId) {
 }
 
 function setBadge (numInsights) {
-    if (numInsights === undefined) {
+    if (numInsights === null) {
         return
     }
 
@@ -67,38 +67,23 @@ function setBadge (numInsights) {
     })
 }
 
-function storeInsightCount(requestData) {
-    if (!requestData) {
-        return
-    }
-
-    const tabId = requestData.tabId
-    const numInsights = requestData.numInsights
-
-    if (tabId === undefined || numInsights === undefined) {
-        return
-    }
-
-    highlightsRepository.persist(tabId, numInsights)
-}
-
 function clearBadge () {
     window.chrome.browserAction.setBadgeText({ text: '' })
 }
 
-function highlightedPage(requestData) {
-    storeInsightCount(requestData)
-    setBadge(requestData.numInsights)
-}
+function updateBadge(tabURL) {
+    if (chromeRegex.test(tabURL)) {
+        clearBadge()
+        return
+    }
 
-function updateBadge(tabId) {
-    highlightsRepository.get(tabId, function(numInsights) {
+    highlightsRepository.getInsightCount(tabURL, function(numInsights) {
         if (!numInsights) {
             clearBadge()
         } else {
             setBadge(numInsights)
         }
-    }) 
+    })
 }
 
 window.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -114,35 +99,43 @@ window.chrome.runtime.onMessage.addListener(function(request, sender, sendRespon
                 return
             }
 
-            highlightedPage(requestData)
+            updateBadge(requestData.tabURL)
+
+            break
+        case runtimeEventsTypes.SIGN_OUT:
+            highlightsRepository.clear()
+            autoHighlightRepository.clear()
 
             break
     }
 })
 
 window.chrome.tabs.onActivated.addListener(function(activeInfo) {
-    updateBadge(activeInfo.tabId)
+    window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        const activeTab = tabs[0]
+
+        if (!activeTab) {
+            return
+        }
+
+        updateBadge(activeTab.url)
+    })
 });
 
-window.chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-    highlightsRepository.remove(tabId)
-})
-
-window.chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
-    if (!('url' in changeInfo)) {
+window.chrome.tabs.onUpdated.addListener(function(tabID, changeInfo) {
+    if (!(changeInfo.url)) {
         return
     }
 
-    highlightsRepository.remove(tabId)
-    clearBadge()
+    updateBadge(changeInfo.url)
 
-    if (chromeRegex.test(changeInfo['url'])) {
+    if (chromeRegex.test(changeInfo.url)) {
         return
     }
 
     autoHighlightRepository.get(function(status) {
         if (status) {
-            autoHighlight(tabId)
+            autoHighlight(tabID, changeInfo.url)
         }
     })
 })
@@ -155,6 +148,10 @@ window.chrome.windows.onFocusChanged.addListener(function() {
             return
         }
 
-        updateBadge(activeTab.id)
+        updateBadge(activeTab.url)
     })
+})
+
+window.chrome.runtime.onStartup.addListener(function() {
+    highlightsRepository.sift()
 })
