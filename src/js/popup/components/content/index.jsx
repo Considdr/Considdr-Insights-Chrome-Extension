@@ -18,7 +18,6 @@ import "styles/components/content/index.sass"
 
 import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
 
-
 @inject('auth') @observer
 export default class Content extends React.Component {
 	constructor(props) {
