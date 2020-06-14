@@ -11,6 +11,8 @@ import * as highlightsRepository from 'js/repositories/highlights'
 const endpoint = wretch()
   .url(secrets.apiEndpoint)
 
+var punctuationRegex = new RegExp(/[.,—’“'\/#!$%\^&\*;:{}=\-_`~()”]/g)
+
 function highlight() {
 	highlightsRepository.getInsights(tabURL, function(validInsights) {
 		if (validInsights == undefined) {
@@ -40,10 +42,18 @@ function getInsights() {
 
 function processResult(response) {
 	if (!response["data"] || !response["data"]["insights"]) {
-		return;
+		highlightsRepository.persist(tabURL, [], function() {
+			runtimeEvents.highlightedPage(tabURL)
+		})
+		return
 	}
 
+	console.log(response)
+
 	let insights = response["data"]["insights"].map(item => item.name);
+
+	console.log(insights)
+
 	highlightInsights(insights);
 }
 
@@ -55,10 +65,11 @@ function highlightInsights(insights) {
 
 		[element, insight] = findInsight(insight)
 
-		// console.log(insight)
+		console.log(insight);
+		console.log("YOs")
 
 		if (element === undefined || element.get().length === 0) {
-			// console.log("NOT FOUND")
+			console.log("NOT FOUND")
 			return;
 		}
 
@@ -76,9 +87,6 @@ function highlightInsights(insights) {
 		font_weight: null,
 		color: "#99dbff"
 	});
-
-	console.log("VALID INSIGHTS")
-	console.log(validInsights)
 
 	highlightsRepository.persist(tabURL, validInsights, function() {
 		runtimeEvents.highlightedPage(tabURL)
@@ -102,7 +110,7 @@ function findInsight(insight) {
 	if ($(element).length) {
 		return [element, insight]
 	} else {
-		return
+		return []
 	}
 }
 
@@ -111,22 +119,24 @@ function findInsightElement(insight) {
 }
 
 function constructInsightHTML(element, insight) {
-	const elementHTML = element.html()
-	const elementText = element.text()
+	var elementHTML = element.html()
+	var elementText = element.text()
 	var startIndex, endIndex, indicies
 
-	try {
-		indicies = getIndicies(elementHTML, elementText, insight)
-	}
-	catch {
-		return
-	}
+	console.log("PRE INDICIES")
+
+	indicies = getIndicies(elementHTML, elementText, insight)
+
+	console.log(indicies)
 
 	if (!indicies) {
 		return
 	}
 
 	[startIndex, endIndex] = indicies
+
+	console.log(startIndex)
+	console.log(endIndex)
 
 	const highlightedHTML = elementHTML.slice(0, startIndex) + "<div class=\"marker-animation\">"
 		+ elementHTML.slice(startIndex, endIndex) + "</div>" + elementHTML.slice(endIndex)
@@ -135,24 +145,81 @@ function constructInsightHTML(element, insight) {
 }
 
 function getIndicies(elementHTML, elementText, insight) {
-	const insightStartWord = getNonEmptyWord(insight, true)
-	const insightEndWord = getNonEmptyWord(insight, false)
+	var insightStartWord = getNonEmptyWord(insight, true)
+
+	console.log(insightStartWord)
+
+	var insightEndWord = getNonEmptyWord(insight, false)
+
+	
+	console.log(insightEndWord)
 
 	if (!insightStartWord || !insightEndWord) {
 		return
 	}
 
-	const elementTextSplit = elementText.split(insight)
-	const startWordCount = (elementTextSplit[0].match(new RegExp(escapePunctuation(insightStartWord)))|| []).length
-	const endWordCount = ((elementTextSplit[0] + insight).match(new RegExp(escapePunctuation(insightEndWord)))|| []).length
+	var elementTextSplit = elementText.split(insight)
 
-	var startIndex = nthIndex(elementHTML, insightStartWord, startWordCount + 1)
-	var endIndex = nthIndex(elementHTML, insightEndWord, endWordCount) + insightEndWord.length
+	var startIndex = getIndex(elementHTML, elementTextSplit[0], insightStartWord, true)
+	var endIndex = getIndex(elementHTML, elementTextSplit[0] + insight, insightEndWord, false)
 
-	if (startIndex == -1 || endIndex == -1) {
+	console.log(startIndex)
+	console.log(endIndex)
+
+	if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
 		return
 	}
 
+	var updatedIndicies = updateIndicies(elementHTML, startIndex, endIndex)
+	[startIndex, endIndex] = updatedIndicies
+
+	return [startIndex, endIndex]
+}
+
+function getIndex(elementHTML, text, word, start) {
+	var index = findIndex(elementHTML, text, word, start)
+
+	if (index != -1) {
+		return start ? index : index + word.length
+	}
+
+	word = clearPunctuation(word, start)
+
+	index = findIndex(elementHTML, text, word, start)
+
+	if (index == -1) {
+		return index
+	}
+
+	return start ? index : index + word.length
+}
+
+function clearPunctuation(word, start) {
+	if (start) {
+		while (word[0].match(punctuationRegex)) {
+			word = word.slice(1);
+		}
+	} else {
+		while (word[word.length-1].match(punctuationRegex)) {
+			word = word.slice(0,-1);
+		}
+	}
+
+	return word
+}
+
+
+function findIndex(elementHTML, text, word, start) {
+	var wordCount = (text.match(new RegExp(escapePunctuation(word), 'g'))|| []).length
+
+	if (start) {
+		wordCount += 1
+	}
+
+	return nthIndex(elementHTML, word, wordCount)
+}
+
+function updateIndicies(elementHTML, startIndex, endIndex) {
 	var totalIndex = 0
 	$.each($.parseHTML(elementHTML), function(i, el) {
 		var elementEndIndex
@@ -182,7 +249,7 @@ function getIndicies(elementHTML, elementText, insight) {
 }
 
 function escapePunctuation(text) {
-	return text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"\\$&")
+	return text.replace(punctuationRegex,"\\$&")
 }
 
 function nthIndex(text, word, n) {
@@ -197,11 +264,15 @@ function nthIndex(text, word, n) {
 }
 
 function getNonEmptyWord(text, start) {
+	console.log(text)
+
 	var split = text.split(" ")
 
 	if (!start) {
 		split = split.reverse()
 	}
+
+	console.log(split)
 	
 	return split.find(function (val) {
 		return val !== ''
@@ -209,13 +280,23 @@ function getNonEmptyWord(text, start) {
 }
 
 function highlightInsight(element, insight) {
+	if (element.hasClass('marker-animation') || element.find('div.marker-animation').length) {
+		console.log("ALREADY EXISTS")
+		return true
+	}
+
 	const insightHTML = constructInsightHTML(element, insight)
+
+	console.log("INSIGHT HTML")
+	console.log(insightHTML)
 
 	if (!insightHTML) {
 		return false
 	}
 
 	if ($.parseHTML(insightHTML)) {
+		console.log("HERE HTML")
+
 		element.html(insightHTML)
 		return true
 	}
