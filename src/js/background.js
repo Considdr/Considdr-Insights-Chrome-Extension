@@ -23,9 +23,7 @@ function manualHighlight () {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         const activeTab = tabs[0]
 
-        if (!activeTab) {
-            return
-        }
+        if (!activeTab) return
 
         if (chromeRegex.test(activeTab.url)) {
             runtimeEvents.updateInsights()
