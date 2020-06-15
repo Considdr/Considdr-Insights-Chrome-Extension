@@ -46,6 +46,19 @@ function autoHighlight(tabID, tabURL) {
         .catch(() => {})
 }
 
+function highlight(tabID, tabURL) {
+    highlightsRepository.getInsights(tabURL, function(insights) {
+		if (insights == undefined) {
+			getInsights(tabID, tabURL)
+		} else if (insights.length == 0) {
+			updateBadge(tabURL)
+            runtimeEvents.updateInsights()
+		} else {
+			executeHighlight(tabID, tabURL, insights)
+		}
+	})
+}
+
 function getInsights(tabID, tabURL) {
 	endpoint
 		.url("/get_work_insights")
@@ -69,45 +82,41 @@ function processResponse(tabID, tabURL, response) {
 		highlightsRepository.persist(tabURL, [], function() {
 			updateBadge(tabURL)
             runtimeEvents.updateInsights()
-		})
+        })
+        
 		return
 	}
 
-	let insights = response["data"]["insights"].map(item => item.name);
+	const insights = response["data"]["insights"].map(item => item.name)
 
 	executeHighlight(tabID, tabURL, insights);
 }
 
-function highlight(tabID, tabURL) {
-    highlightsRepository.getInsights(tabURL, function(insights) {
-		if (insights == undefined) {
-			getInsights(tabID, tabURL)
-		} else if (insights.length == 0) {
-			updateBadge(tabURL)
-            runtimeEvents.updateInsights()
-		} else {
-			executeHighlight(tabID, tabURL, insights)
-		}
-	})
-}
-
 function executeHighlight(tabID, tabURL, insights) {
     chrome.tabs.executeScript(tabID, {
-        code: `var insights = ${JSON.stringify(insights)}; var tabURL = "${tabURL}"`
+        code: `const insights = ${JSON.stringify(insights)}; const tabURL = "${tabURL}"`
     }, function() {
-        chrome.tabs.executeScript(tabID, {
-            file: 'highlight.bundle.js'
-        }, ()=>void chrome.runtime.lastError
+            chrome.tabs.executeScript(tabID, {
+                file: 'highlight.bundle.js'
+            }, () => void chrome.runtime.lastError
         );
     });
+}
+
+function updateBadge(tabURL) {
+    highlightsRepository.getInsightCount(tabURL, function(numInsights) {
+        if (numInsights === null) {
+            clearBadge()
+        } else {
+            setBadge(numInsights)
+        }
+    })
 }
 
 function setBadge (numInsights) {
     clearBadge()
 
-    if (numInsights === null) {
-        return
-    }
+    if (numInsights === null) return
 
     window.chrome.browserAction.setBadgeBackgroundColor({
         color: badgeColor
@@ -122,16 +131,6 @@ function clearBadge () {
     window.chrome.browserAction.setBadgeText({ text: '' })
 }
 
-function updateBadge(tabURL) {
-    highlightsRepository.getInsightCount(tabURL, function(numInsights) {
-        if (numInsights === null) {
-            clearBadge()
-        } else {
-            setBadge(numInsights)
-        }
-    })
-}
-
 window.chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     switch(request.type) {
         case runtimeEventsTypes.HIGHLIGHT:
@@ -141,9 +140,7 @@ window.chrome.runtime.onMessage.addListener(function(request, sender, sendRespon
         case runtimeEventsTypes.HIGHLIGHTED_PAGE:
             const requestData = request.data
 
-            if (!requestData) {
-                return
-            }
+            if (!requestData) return
 
             updateBadge(requestData.tabURL)
             runtimeEvents.updateInsights()
@@ -161,29 +158,21 @@ window.chrome.tabs.onActivated.addListener(function(activeInfo) {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         const activeTab = tabs[0]
 
-        if (!activeTab) {
-            return
-        }
+        if (!activeTab) return
 
         updateBadge(activeTab.url)
     })
 });
 
 window.chrome.tabs.onUpdated.addListener(function(tabID, changeInfo) {
-    if (!(changeInfo.url)) {
-        return
-    }
+    if (!(changeInfo.url)) return
 
     updateBadge(changeInfo.url)
 
-    if (chromeRegex.test(changeInfo.url)) {
-        return
-    }
+    if (chromeRegex.test(changeInfo.url)) return
 
     autoHighlightRepository.get(function(status) {
-        if (status) {
-            autoHighlight(tabID, changeInfo.url)
-        }
+        if (status) autoHighlight(tabID, changeInfo.url)
     })
 })
 
@@ -191,9 +180,7 @@ window.chrome.windows.onFocusChanged.addListener(function() {
     window.chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         const activeTab = tabs[0]
 
-        if (!activeTab) {
-            return
-        }
+        if (!activeTab) return
 
         updateBadge(activeTab.url)
     })
