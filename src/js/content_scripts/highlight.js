@@ -13,47 +13,7 @@ const endpoint = wretch()
 
 var punctuationRegex = new RegExp(/[.,—’“'\/#!$%\^&\*;:{}=\-_`~()”]/g)
 
-function highlight() {
-	highlightsRepository.getInsights(tabURL, function(validInsights) {
-		if (validInsights == undefined) {
-			getInsights()
-		} else {
-			highlightInsights(validInsights)
-		}
-	})
-}
-
-function getInsights() {
-	endpoint
-		.url("/get_work_insights")
-		.query({
-			work_url: tabURL
-		})
-		.get()
-		.json(json => {
-			processResponse(json)
-		})
-		.catch(() => {
-			highlightsRepository.persist(tabURL, [], function() {
-				runtimeEvents.highlightedPage(tabURL)
-			})
-		})
-}
-
-function processResponse(response) {
-	if (!response["data"] || !response["data"]["insights"]) {
-		highlightsRepository.persist(tabURL, [], function() {
-			runtimeEvents.highlightedPage(tabURL)
-		})
-		return
-	}
-
-	let insights = response["data"]["insights"].map(item => item.name);
-
-	highlightInsights(insights);
-}
-
-function highlightInsights(insights) {
+function highlightInsights() {
 	var validInsights = []
 
 	insights.forEach(function(insight) {
@@ -273,4 +233,4 @@ function highlightInsight(element, insight) {
 	return false
 }
 
-highlight()
+highlightInsights()

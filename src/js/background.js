@@ -46,9 +46,56 @@ function autoHighlight(tabID, tabURL) {
         .catch(() => {})
 }
 
+function getInsights(tabID, tabURL) {
+	endpoint
+		.url("/get_work_insights")
+		.query({
+			work_url: tabURL
+		})
+		.get()
+		.json(json => {
+			processResponse(tabID, tabURL, json)
+		})
+		.catch(() => {
+			highlightsRepository.persist(tabURL, [], function() {
+				updateBadge(tabURL)
+                runtimeEvents.updateInsights()
+			})
+		})
+}
+
+function processResponse(tabID, tabURL, response) {
+	if (!response["data"] || !response["data"]["insights"]) {
+		highlightsRepository.persist(tabURL, [], function() {
+			updateBadge(tabURL)
+            runtimeEvents.updateInsights()
+		})
+		return
+	}
+
+	let insights = response["data"]["insights"].map(item => item.name);
+
+	executeHighlight(tabID, tabURL, insights);
+}
+
 function highlight(tabID, tabURL) {
+    highlightsRepository.getInsights(tabURL, function(insights) {
+		if (insights == undefined) {
+			getInsights(tabID, tabURL)
+		} else if (insights.length == 0) {
+			updateBadge(tabURL)
+            runtimeEvents.updateInsights()
+		} else {
+			executeHighlight(tabID, tabURL, insights)
+		}
+	})
+}
+
+function executeHighlight(tabID, tabURL, insights) {
+    console.log(insights)
+
     chrome.tabs.executeScript(tabID, {
-        code: `var tabURL = "${tabURL}"`
+        code: `var insights = ${JSON.stringify(insights)}; var tabURL = "${tabURL}"`
     }, function() {
         chrome.tabs.executeScript(tabID, {
             file: 'highlight.bundle.js'
@@ -58,11 +105,11 @@ function highlight(tabID, tabURL) {
 }
 
 function setBadge (numInsights) {
+    clearBadge()
+
     if (numInsights === null) {
         return
     }
-
-    clearBadge()
 
     window.chrome.browserAction.setBadgeBackgroundColor({
         color: badgeColor

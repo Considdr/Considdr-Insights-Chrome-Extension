@@ -38,8 +38,6 @@ export function getInsights (url, callback) {
             highlights = {}
         }
 
-        console.log(highlights)
-
         if (url in highlights) {
             insights = highlights[url]["insights"]
             highlights[url]["lastAccessed"] = Date.now()
