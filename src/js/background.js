@@ -92,8 +92,6 @@ function highlight(tabID, tabURL) {
 }
 
 function executeHighlight(tabID, tabURL, insights) {
-    console.log(insights)
-
     chrome.tabs.executeScript(tabID, {
         code: `var insights = ${JSON.stringify(insights)}; var tabURL = "${tabURL}"`
     }, function() {

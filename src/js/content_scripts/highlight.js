@@ -1,6 +1,3 @@
-import wretch from "wretch"
-import secrets from "secrets"
-
 import $ from 'jquery'
 import 'jquery.marker-animation'
 
@@ -8,10 +5,7 @@ import * as runtimeEvents from 'js/utils/runtimeEvents'
 
 import * as highlightsRepository from 'js/repositories/highlights'
 
-const endpoint = wretch()
-  .url(secrets.apiEndpoint)
-
-var punctuationRegex = new RegExp(/[.,—’“'\/#!$%\^&\*;:{}=\-_`~()”]/g)
+const punctuationRegex = new RegExp(/[.,—’“'\/#!$%\^&\*;:{}=\-_`~()”]/g)
 
 function highlightInsights() {
 	var validInsights = []
@@ -19,12 +13,9 @@ function highlightInsights() {
 	insights.forEach(function(insight) {
 		var element
 
-		console.log(insight);
-
 		[element, insight] = findInsight(insight)
 		
-		if (element === undefined || element.get().length === 0) {
-			console.log("NOT FOUND")
+		if (element === null || element.get().length === 0) {
 			return;
 		}
 
@@ -65,7 +56,7 @@ function findInsight(insight) {
 	if ($(element).length) {
 		return [element, insight]
 	} else {
-		return []
+		return [null, insight]
 	}
 }
 
@@ -74,17 +65,16 @@ function findInsightElement(insight) {
 }
 
 function constructInsightHTML(element, insight) {
-	var elementHTML = element.html()
-	var elementText = element.text()
-	var startIndex, endIndex, indicies
+	const elementHTML = element.html()
+	const elementText = element.text()
 
-	indicies = getIndicies(elementHTML, elementText, insight)
+	const indicies = getIndicies(elementHTML, elementText, insight)
 
 	if (!indicies) {
 		return
 	}
 
-	[startIndex, endIndex] = indicies
+	const [startIndex, endIndex] = indicies
 
 	const highlightedHTML = elementHTML.slice(0, startIndex) + "<div class=\"marker-animation\">"
 		+ elementHTML.slice(startIndex, endIndex) + "</div>" + elementHTML.slice(endIndex)
@@ -93,14 +83,14 @@ function constructInsightHTML(element, insight) {
 }
 
 function getIndicies(elementHTML, elementText, insight) {
-	var insightStartWord = getNonEmptyWord(insight, true)
-	var insightEndWord = getNonEmptyWord(insight, false)
+	const insightStartWord = getNonEmptyWord(insight, true)
+	const insightEndWord = getNonEmptyWord(insight, false)
 
 	if (!insightStartWord || !insightEndWord) {
 		return
 	}
 
-	var elementTextSplit = elementText.split(insight)
+	const elementTextSplit = elementText.split(insight)
 
 	var startIndex = getIndex(elementHTML, elementTextSplit[0], insightStartWord, true)
 	var endIndex = getIndex(elementHTML, elementTextSplit[0] + insight, insightEndWord, false)
@@ -109,8 +99,7 @@ function getIndicies(elementHTML, elementText, insight) {
 		return
 	}
 
-	var updatedIndicies = updateIndicies(elementHTML, startIndex, endIndex)
-	[startIndex, endIndex] = updatedIndicies
+	[startIndex, endIndex] = updateIndicies(elementHTML, startIndex, endIndex)
 
 	return [startIndex, endIndex]
 }

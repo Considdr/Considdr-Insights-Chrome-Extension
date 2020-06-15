@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 
-import { Checkbox } from 'semantic-ui-react'
-
 import * as autoHighlightRepository from 'js/repositories/autoHighlight'
+
+import { Checkbox } from 'semantic-ui-react'
 
 const AutoHighlight = (props) => {
     const [autoHighlight, setAutoHighlight] = useState(false)

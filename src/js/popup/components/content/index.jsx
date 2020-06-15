@@ -5,15 +5,14 @@ import { extendObservable } from "mobx";
 
 import { Insights } from 'popup/stores'
 
+import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
+
 import Layout from "popup/layouts/layout"
 import InsightsDisplay from "./insightsDisplay"
 import AutoHighlight from "./autoHighlight"
-
-import { Grid } from 'semantic-ui-react'
-
 import Loading from "popup/components/loading"
 
-import * as runtimeEventsTypes from 'js/constants/runtimeEventsTypes'
+import { Grid } from 'semantic-ui-react'
 
 @inject('auth') @observer
 export default class Content extends React.Component {
@@ -28,7 +27,7 @@ export default class Content extends React.Component {
 	componentDidMount() {
 		window.chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			if (request.type == runtimeEventsTypes.UPDATE_INSIGHTS) {
-				this.insights.init()
+				this.insights.load()
 			}
 		})
 	}

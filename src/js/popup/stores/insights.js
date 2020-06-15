@@ -18,17 +18,15 @@ export default class Insights {
     }
 
     constructor() {
-        this.init()
+        this.load()
     }
     
-    init() {
+    load() {
         window.chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
             const activeTab = tabs[0]
 
             if (activeTab) {
                 highlightsRepository.getInsightCount(activeTab.url, (numInsights) => {
-                    console.log(numInsights)
-
                     this.updateNumInsights(numInsights)
                 })
             }
