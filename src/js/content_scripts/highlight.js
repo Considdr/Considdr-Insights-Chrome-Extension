@@ -31,7 +31,7 @@ function getInsights() {
 		})
 		.get()
 		.json(json => {
-			processResult(json)
+			processResponse(json)
 		})
 		.catch(() => {
 			highlightsRepository.persist(tabURL, [], function() {
@@ -40,7 +40,7 @@ function getInsights() {
 		})
 }
 
-function processResult(response) {
+function processResponse(response) {
 	if (!response["data"] || !response["data"]["insights"]) {
 		highlightsRepository.persist(tabURL, [], function() {
 			runtimeEvents.highlightedPage(tabURL)
@@ -48,11 +48,7 @@ function processResult(response) {
 		return
 	}
 
-	console.log(response)
-
 	let insights = response["data"]["insights"].map(item => item.name);
-
-	console.log(insights)
 
 	highlightInsights(insights);
 }
@@ -63,11 +59,10 @@ function highlightInsights(insights) {
 	insights.forEach(function(insight) {
 		var element
 
-		[element, insight] = findInsight(insight)
-
 		console.log(insight);
-		console.log("YOs")
 
+		[element, insight] = findInsight(insight)
+		
 		if (element === undefined || element.get().length === 0) {
 			console.log("NOT FOUND")
 			return;
@@ -100,10 +95,10 @@ function findInsight(insight) {
 		return [element, insight]
 	}
 
-	insight = insight.replace("\'", "’")
+	insight = insight.replace(/\'/g, "’")
 	insight = insight.replace(/"([^"]*)"/g, "“$1”")
-	insight = insight.replace("\"", "“")
-	insight = insight.replace("--", "—")
+	insight = insight.replace(/\"/g, "“")
+	insight = insight.replace(/--/g, "—")
 
 	element = findInsightElement(insight)
 	
@@ -115,7 +110,7 @@ function findInsight(insight) {
 }
 
 function findInsightElement(insight) {
-	return $(`*:contains(${insight})`).last()
+	return $(`*:contains(${insight})`).not('script').last()
 }
 
 function constructInsightHTML(element, insight) {
@@ -123,20 +118,13 @@ function constructInsightHTML(element, insight) {
 	var elementText = element.text()
 	var startIndex, endIndex, indicies
 
-	console.log("PRE INDICIES")
-
 	indicies = getIndicies(elementHTML, elementText, insight)
-
-	console.log(indicies)
 
 	if (!indicies) {
 		return
 	}
 
 	[startIndex, endIndex] = indicies
-
-	console.log(startIndex)
-	console.log(endIndex)
 
 	const highlightedHTML = elementHTML.slice(0, startIndex) + "<div class=\"marker-animation\">"
 		+ elementHTML.slice(startIndex, endIndex) + "</div>" + elementHTML.slice(endIndex)
@@ -146,13 +134,7 @@ function constructInsightHTML(element, insight) {
 
 function getIndicies(elementHTML, elementText, insight) {
 	var insightStartWord = getNonEmptyWord(insight, true)
-
-	console.log(insightStartWord)
-
 	var insightEndWord = getNonEmptyWord(insight, false)
-
-	
-	console.log(insightEndWord)
 
 	if (!insightStartWord || !insightEndWord) {
 		return
@@ -162,9 +144,6 @@ function getIndicies(elementHTML, elementText, insight) {
 
 	var startIndex = getIndex(elementHTML, elementTextSplit[0], insightStartWord, true)
 	var endIndex = getIndex(elementHTML, elementTextSplit[0] + insight, insightEndWord, false)
-
-	console.log(startIndex)
-	console.log(endIndex)
 
 	if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
 		return
@@ -264,15 +243,11 @@ function nthIndex(text, word, n) {
 }
 
 function getNonEmptyWord(text, start) {
-	console.log(text)
-
 	var split = text.split(" ")
 
 	if (!start) {
 		split = split.reverse()
 	}
-
-	console.log(split)
 	
 	return split.find(function (val) {
 		return val !== ''
@@ -280,23 +255,17 @@ function getNonEmptyWord(text, start) {
 }
 
 function highlightInsight(element, insight) {
-	if (element.hasClass('marker-animation') || element.find('div.marker-animation').length) {
-		console.log("ALREADY EXISTS")
-		return true
-	}
-
 	const insightHTML = constructInsightHTML(element, insight)
-
-	console.log("INSIGHT HTML")
-	console.log(insightHTML)
 
 	if (!insightHTML) {
 		return false
 	}
 
-	if ($.parseHTML(insightHTML)) {
-		console.log("HERE HTML")
+	if (element.html().indexOf(insightHTML) > -1) {
+		return true
+	}
 
+	if ($.parseHTML(insightHTML)) {
 		element.html(insightHTML)
 		return true
 	}
