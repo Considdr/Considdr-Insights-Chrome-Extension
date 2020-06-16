@@ -86,7 +86,7 @@ export default class Auth {
 				try {
 					errorMessage = JSON.parse(error.message).data.error
 				} catch {
-					errorMessage = "server_error"
+					errorMessage = "unexpected_error"
 				}
 
 				this.handleError(errorMessage)
