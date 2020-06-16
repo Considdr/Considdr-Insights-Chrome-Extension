@@ -6,8 +6,6 @@ import Layout from "js/popup/layouts/layout"
 
 import { Form, Button, Message } from 'semantic-ui-react'
 
-import secrets from "secrets"; //REMOVE THIS
-
 import styles from "styles/components/auth/sign_in.sass"
 import buttons from "styles/buttons.sass"
 
@@ -16,7 +14,7 @@ export default class SignIn extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = { email: secrets.email, password: secrets.password } //REMOVE INITIAL
+    this.state = { email: "", password: "" }
   }
 
   handleChange = (e, { name, value }) => {
