@@ -15,14 +15,10 @@ function highlightInsights() {
 
 		[element, insight] = findInsight(insight)
 		
-		if (element === null || element.get().length === 0) {
-			return;
-		}
+		if (element === null || element.get().length === 0) return
 
 		try {
-			if (highlightInsight(element, insight)) {
-				validInsights.push(insight)
-			}
+			if (highlightInsight(element, insight)) validInsights.push(insight)
 		}
 		catch {
 			return
@@ -42,9 +38,7 @@ function highlightInsights() {
 function findInsight(insight) {
 	var element = findInsightElement(insight)
 
-	if ($(element).length) {
-		return [element, insight]
-	}
+	if ($(element).length) return [element, insight]
 
 	insight = insight.replace(/\'/g, "’")
 	insight = insight.replace(/"([^"]*)"/g, "“$1”")
@@ -70,9 +64,7 @@ function constructInsightHTML(element, insight) {
 
 	const indicies = getIndicies(elementHTML, elementText, insight)
 
-	if (!indicies) {
-		return
-	}
+	if (!indicies) return
 
 	const [startIndex, endIndex] = indicies
 
@@ -86,18 +78,14 @@ function getIndicies(elementHTML, elementText, insight) {
 	const insightStartWord = getNonEmptyWord(insight, true)
 	const insightEndWord = getNonEmptyWord(insight, false)
 
-	if (!insightStartWord || !insightEndWord) {
-		return
-	}
+	if (!insightStartWord || !insightEndWord) return
 
 	const elementTextSplit = elementText.split(insight)
 
 	var startIndex = getIndex(elementHTML, elementTextSplit[0], insightStartWord, true)
 	var endIndex = getIndex(elementHTML, elementTextSplit[0] + insight, insightEndWord, false)
 
-	if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) {
-		return
-	}
+	if (startIndex == -1 || endIndex == -1 || startIndex >= endIndex) return
 
 	[startIndex, endIndex] = updateIndicies(elementHTML, startIndex, endIndex)
 
@@ -107,17 +95,13 @@ function getIndicies(elementHTML, elementText, insight) {
 function getIndex(elementHTML, text, word, start) {
 	var index = findIndex(elementHTML, text, word, start)
 
-	if (index != -1) {
-		return start ? index : index + word.length
-	}
+	if (index != -1) return start ? index : index + word.length
 
 	word = clearPunctuation(word, start)
 
 	index = findIndex(elementHTML, text, word, start)
 
-	if (index == -1) {
-		return index
-	}
+	if (index == -1) return index
 
 	return start ? index : index + word.length
 }
@@ -140,9 +124,7 @@ function clearPunctuation(word, start) {
 function findIndex(elementHTML, text, word, start) {
 	var wordCount = (text.match(new RegExp(escapePunctuation(word), 'g'))|| []).length
 
-	if (start) {
-		wordCount += 1
-	}
+	if (start) wordCount += 1
 
 	return nthIndex(elementHTML, word, wordCount)
 }
@@ -194,9 +176,7 @@ function nthIndex(text, word, n) {
 function getNonEmptyWord(text, start) {
 	var split = text.split(" ")
 
-	if (!start) {
-		split = split.reverse()
-	}
+	if (!start) split = split.reverse()
 	
 	return split.find(function (val) {
 		return val !== ''
@@ -208,13 +188,9 @@ function highlightInsight(element, insight) {
 
 	if (!insightHTML) {
 		return false
-	}
-
-	if (element.html().indexOf(insightHTML) > -1) {
+	} else if (element.html().indexOf(insightHTML) > -1) {
 		return true
-	}
-
-	if ($.parseHTML(insightHTML)) {
+	} else if ($.parseHTML(insightHTML)) {
 		element.html(insightHTML)
 		return true
 	}

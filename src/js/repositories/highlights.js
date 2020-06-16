@@ -1,7 +1,5 @@
 export function persist (url, validInsights, callback) {
-    if (!url || !validInsights) {
-        return
-    }
+    if (!url || !validInsights) return
 
     window.chrome.storage.local.get('highlights', function(data) {
         var highlights
@@ -25,9 +23,7 @@ export function persist (url, validInsights, callback) {
 }
 
 export function getInsights (url, callback) {
-    if (!url) {
-        return
-    }
+    if (!url) return
 
     window.chrome.storage.local.get('highlights', function(data) {
         var highlights, insights
@@ -50,9 +46,7 @@ export function getInsights (url, callback) {
 }
 
 export function getInsightCount (url, callback) {
-    if (!url) {
-        return
-    }
+    if (!url) return
 
     window.chrome.storage.local.get('highlights', function(data) {
         var highlights, numInsights
