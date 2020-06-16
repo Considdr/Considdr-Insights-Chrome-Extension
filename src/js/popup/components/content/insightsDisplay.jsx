@@ -18,7 +18,7 @@ const InsightsDisplay = (props) => {
             <Button
                 onClick={ props.highlight }
                 styleName="buttons.base"
-                content="Highlight Insights"
+                content="Find Insights"
             />
         </Grid>
     )  
