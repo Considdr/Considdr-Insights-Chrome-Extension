@@ -1,3 +1,8 @@
+/*
+	Runtime events helper that is responsible for the passing of messages
+	between the background script and the popup
+*/
+
 import * as runtimeEventsTypes from '../constants/runtimeEventsTypes.js'
 
 export function highlight () {

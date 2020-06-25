@@ -33,7 +33,6 @@ const punctuationRegex = new RegExp(/[.,—’“'\/#!$%\^&\*;:{}=\-_`~()”]/g)
   * Identifies all valid insights on the page, wraps them in the highlight
   * animation div, triggers the highlighting animation, and persists all valid
   * insights in chrome storage.
-  * 
 */
 function highlightInsights() {
 	var validInsights = []
@@ -80,9 +79,9 @@ function highlightInsights() {
   * This function wraps around the jQuery function that identifies the element
   * in the page
   * 
-  * @param {string} insight - the insight of which we want to find
+  * @param {string} insight - The insight of which we want to find
   * the parent element
-  * @return {Array} - element containing insight and the identified insight text 
+  * @return {Array} - Element containing insight and the identified insight text 
 */
 function findInsight(insight) {
 	var element = findInsightElement(insight)
@@ -107,9 +106,9 @@ function findInsight(insight) {
 /**
   * Find and returns the element which contains the input insight
   * 
-  * @param {string} insight - the insight of which we want to find
+  * @param {string} insight - The insight of which we want to find
   * the parent element
-  * @return {Element} - element containing insight and the identified
+  * @return {Element} - Element containing insight and the identified
   * insight text 
 */
 function findInsightElement(insight) {
@@ -120,9 +119,9 @@ function findInsightElement(insight) {
   * Computes the start and end index of the insight and reconstructs the
   * element HTML to wrap the insight in the highlight animation div
   * 
-  * @param {Element} element - the element containing the input insight
-  * @param {string} insight - input insight 
-  * @return {string} - reconstructed element HTML, with the insight wrapped in
+  * @param {Element} element - The element containing the input insight
+  * @param {string} insight - Input insight 
+  * @return {string} - Reconstructed element HTML, with the insight wrapped in
   * the highlight animation div
 */
 function constructInsightHTML(element, insight) {
@@ -146,11 +145,11 @@ function constructInsightHTML(element, insight) {
 /**
   * Computes and returns the start and end index of the insight
   * 
-  * @param {string} elementHTML - the parent element html
-  * @param {string} elementText - the parent element text 
-  * @param {string} insight - the input insight
+  * @param {string} elementHTML - The parent element html
+  * @param {string} elementText - The parent element text 
+  * @param {string} insight - The input insight
   * 
-  * @return {Array} - start and end index of the input insight in its parent
+  * @return {Array} - Start and end index of the input insight in its parent
   * element
 */
 function getIndicies(elementHTML, elementText, insight) {
@@ -176,11 +175,32 @@ function getIndicies(elementHTML, elementText, insight) {
 	return [startIndex, endIndex]
 }
 
+/**
+  * Wrapper function that returns the start or end index of the insight in the
+  * element HTML.
+  * 
+  * This function finds the index of appropriate instance of either either the
+  * start or end word of the insight (if start, then find the first instance,
+  * if end, then find the last instance). If it cannot find the index at first,
+  * the function will clear the appropriate puntuation of the word and try to
+  * find the index again.
+  * 
+  * @param {string} elementHTML - The parent element html
+  * @param {string} text - The text in which to find the word
+  * @param {string} word - The start of end word to find the index of
+  * @param {boolean} start - Whether to find start or end index
+  * 
+  * @return {number} - the start or end index
+*/
 function getIndex(elementHTML, text, word, start) {
 	var index = findIndex(elementHTML, text, word, start)
 
 	if (index != -1) return start ? index : index + word.length
 
+	/*
+		If index not found, clear the appropriate punctuation of the word and
+		try again
+	*/
 	word = clearEndPunctuation(word, start)
 
 	index = findIndex(elementHTML, text, word, start)
@@ -190,12 +210,22 @@ function getIndex(elementHTML, text, word, start) {
 	return start ? index : index + word.length
 }
 
+/**
+  * Clears the appropriate punctuation of the word to be found
+  * 
+  * @param {string} word - The start of end word
+  * @param {boolean} start - Whether to clear the head or tail punctuation
+  * 
+  * @return {string} - the word with the appropriate punctuation cleared
+*/
 function clearEndPunctuation(word, start) {
 	if (start) {
+		// If input word is the start word, clear the head puntuation 
 		while (word[0].match(punctuationRegex)) {
 			word = word.slice(1);
 		}
 	} else {
+		// Otherwise clear the tail punctuation
 		while (word[word.length-1].match(punctuationRegex)) {
 			word = word.slice(0,-1);
 		}
@@ -204,27 +234,115 @@ function clearEndPunctuation(word, start) {
 	return word
 }
 
-
+/**
+  * Finds and returns the start or end index of the insight in the element HTML.
+  * 
+  * This function finds the index of appropriate instance of either either the
+  * start or end word of the insight (if start, then find the first instance,
+  * if end, then find the last instance).
+  * 
+  * @param {string} elementHTML - The parent element html
+  * @param {string} text - The text in which to find the word
+  * @param {string} word - The start of end word to find the index of
+  * @param {boolean} start - Whether to find start or end index
+  * 
+  * @return {number} - The start or end index
+*/
 function findIndex(elementHTML, text, word, start) {
+	// Determine the 
 	var wordCount = (
 		text.match(new RegExp(escapePunctuation(word), 'g')) || []
 	).length
 
+	// TODO: TEST THIS. SHOULD IT JUST BE SET TO 1?????
 	if (start) wordCount += 1
 
 	return nthIndex(elementHTML, word, wordCount)
 }
 
+/**
+  * Escapes the input word punctuation to be able to properly search for it
+  * in the text
+  * 
+  * @param {string} text - The text in which to find the word
+  * 
+  * @return {string} - The start or end index
+*/
+function escapePunctuation(text) {
+	return text.replace(punctuationRegex,"\\$&")
+}
+
+/**
+  * Finds the n index of the input word in the input text
+  * 
+  * @param {string} text - The text in which to find the word
+  * @param {string} word - The word to be found
+  * @param {number} n - The index of the word to be found
+  * 
+  * @return {string} - The start or end index
+*/
+function nthIndex(text, word, n) {
+	var textLength = text.length, i = -1
+
+    while(n-- && i++ < textLength) {
+        i = text.indexOf(word, i)
+        if (i < 0) break;
+	}
+	
+    return i
+}
+
+/**
+  * Gets the first or last word of the input text
+  * 
+  * @param {string} text - The text from which to extract the first or last word
+  * @param {boolean} start - Whether to find the first or last word of the
+  * input text
+  * 
+  * @return {string} - The first or last word of the input text
+*/
+function getNonEmptyWord(text, start) {
+	var split = text.split(" ")
+
+	// If looking for last word, reverse the text
+	if (!start) split = split.reverse()
+	
+	return split.find(function (val) {
+		return val !== ''
+	})
+}
+
+/**
+  * Updates the start and end index of the insight in the parent element's HTML
+  * in order to account for wrapping tags. As some insights may be wrapped in
+  * partially wrapped in other tags (e.g. link tags), we also want to be able to
+  * account for that wraps when highlighting the insight
+  * 
+  * @param {string} elementHTML - The parent element html
+  * @param {number} startIndex - The current start index of the insight
+  * @param {boolean} endIndex - The current end index of the insight
+  * 
+  * @return {Array} - The updated start and end index of the insight
+*/
 function updateIndicies(elementHTML, startIndex, endIndex) {
 	var totalIndex = 0
+
+	// Iterate through each of the element's DOM nodes
 	$.each($.parseHTML(elementHTML), function(i, el) {
 		var elementEndIndex
 
 		if (el.outerHTML !== undefined) {
+			// If a DOM node is a tag, add total length of node
 			elementEndIndex = el.outerHTML.length
 		} else {
+			// Otherwise, just add length of text
 			elementEndIndex = el.length
 		}
+
+		/*
+			If the start index is within the current DOM node and the DOM node
+			is a tag, set the start index to the start of the tag
+		*/ 
 
 		if (startIndex >= totalIndex &&
 			startIndex <= totalIndex + elementEndIndex) {
@@ -233,6 +351,10 @@ function updateIndicies(elementHTML, startIndex, endIndex) {
 			}
 		}
 		
+		/*
+			If the end index is within the current DOM node and the DOM node
+			is a tag, set the end index to the end of the tag
+		*/ 
 		if (endIndex >= totalIndex &&
 			endIndex <= totalIndex + elementEndIndex) {
 			if (el.outerHTML !== undefined) {
@@ -246,37 +368,28 @@ function updateIndicies(elementHTML, startIndex, endIndex) {
 	return [startIndex, endIndex]
 }
 
-function escapePunctuation(text) {
-	return text.replace(punctuationRegex,"\\$&")
-}
-
-function nthIndex(text, word, n) {
-	var textLength = text.length, i = -1
-
-    while(n-- && i++ < textLength) {
-        i = text.indexOf(word, i)
-        if (i < 0) break;
-	}
-	
-    return i
-}
-
-function getNonEmptyWord(text, start) {
-	var split = text.split(" ")
-
-	if (!start) split = split.reverse()
-	
-	return split.find(function (val) {
-		return val !== ''
-	})
-}
-
+/**
+  * Reconstructs the element HTML such that the insight can be wrapped in
+  * the highlight animation div. 
+  * 
+  * @param {Element} element - The element in which the insight exists
+  * @param {string} insight - The insight to highlight
+  * 
+  * @return {boolean} - Whether or not the insight was successfully wrapped in
+  * the highlight animation div
+*/
 function highlightInsight(element, insight) {
+	/*
+		Reconstructs the HTML surrounding the insight to wrap it in
+		the highlight animation div
+    */ 
 	const insightHTML = constructInsightHTML(element, insight)
 
 	if (!insightHTML) {
+		// If insightHTML is null, it could not be successfully wrapped
 		return false
 	} else if (element.html().indexOf(insightHTML) > -1) {
+		// If the element has already been highlighted, ignore it
 		return true
 	} else if ($.parseHTML(insightHTML)) {
 		element.html(insightHTML)

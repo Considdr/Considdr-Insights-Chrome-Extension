@@ -1,3 +1,7 @@
+/* 
+    Sass / Scss loader
+*/
+
 const path = require("path")
 
 module.exports = {
