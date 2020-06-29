@@ -18,8 +18,6 @@ import 'styles/layouts/layout.sass'
  */
 @inject('auth')
 export default class Layout extends React.Component {
-    // TODO: CAN I PUT THESE FUNCTIONS IN THE FOOTER??
-
     goToConsiddr = () => {
 		window.chrome.tabs.update({
 			url: "https://www.considdr.com/"
