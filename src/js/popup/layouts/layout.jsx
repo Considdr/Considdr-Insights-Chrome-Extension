@@ -10,8 +10,16 @@ import banner from "images/banner.png"
 
 import 'styles/layouts/layout.sass'
 
+/**
+ * The default app component layout
+ * 
+ * This layout is injected with the auth store to make the auth observables
+ * avaibale as props
+ */
 @inject('auth')
 export default class Layout extends React.Component {
+    // TODO: CAN I PUT THESE FUNCTIONS IN THE FOOTER??
+
     goToConsiddr = () => {
 		window.chrome.tabs.update({
 			url: "https://www.considdr.com/"

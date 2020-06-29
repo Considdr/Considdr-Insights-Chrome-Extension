@@ -1,5 +1,8 @@
 import localize from 'fronto-localize'
 
+/**
+ * The Auth store's locale utility to store localized user messages
+ */
 const en = {
     empty_fields: "Please fill all fields",
     invalid_credentials: "Invalid username or password",

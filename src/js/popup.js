@@ -10,10 +10,12 @@ import { Auth } from "popup/stores"
 import 'semantic-ui-css/semantic.min.css'
 import 'styles/layouts/app.sass'
 
+// Init API endpoint
 const endpoint = wretch()
   .url(secrets.apiEndpoint)
   .accept("application/json")
 
+// Init App resources
 const resources = {
   endpoint,
   auth: new Auth(endpoint)

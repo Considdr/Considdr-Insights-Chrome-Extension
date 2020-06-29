@@ -9,6 +9,9 @@ import { Form, Button, Message } from 'semantic-ui-react'
 import styles from "styles/components/auth/sign_in.sass"
 import buttons from "styles/buttons.sass"
 
+/**
+ * The Sign In component responsible for handling user sign in
+ */
 @inject('auth') @observer
 export default class SignIn extends React.Component {
   constructor(props) {
@@ -43,18 +46,49 @@ export default class SignIn extends React.Component {
 
     return (
       <Layout>
-      	<Form onSubmit = {this.submitForm} styleName="styles.signInForm" error>
+      	<Form
+          onSubmit = {this.submitForm}
+          styleName="styles.signInForm"
+          error
+        >
           <Form.Field>
-            <Form.Input fluid icon='user' iconPosition='left' type="email" placeholder='Email' name='email' value={email} onChange={this.handleChange}/>
+            <Form.Input
+              fluid icon='user'
+              iconPosition='left'
+              type="email"
+              placeholder='Email'
+              name='email'
+              value={email}
+              onChange={this.handleChange}
+            />
           </Form.Field>
           <Form.Field>
-            <Form.Input fluid icon='lock' iconPosition='left' type="password" placeholder='Password' name='password' value={password} onChange={this.handleChange}/>
+            <Form.Input
+              fluid
+              icon='lock'
+              iconPosition='left'
+              type="password"
+              placeholder='Password'
+              name='password'
+              value={password}
+              onChange={this.handleChange}
+            />
           </Form.Field>
             {
               message &&
-                <Message error size='tiny' header="Error" content={message.body}/>
+                <Message
+                  error
+                  size='tiny'
+                  header="Error"
+                  content={message.body}
+                />
             }
-          <Button type='submit' styleName="buttons.base"> Sign In </Button>
+          <Button
+            type='submit'
+            styleName="buttons.base"
+          >
+            Sign In
+          </Button>
       	</Form>
       </Layout>
     )

@@ -14,16 +14,27 @@ import Loading from "popup/components/loading"
 
 import { Grid } from 'semantic-ui-react'
 
+/**
+ * The Content component displayed when the user is signed in. This component
+ * is responsible for handling all user interaction whilst logged in.
+ */
 @inject('auth') @observer
 export default class Content extends React.Component {
 	constructor(props) {
 		super(props)
 
+		/**
+		 * Add observable property "insights"
+		 */
 		extendObservable(this, {
 			insights: new Insights
 		})
 	}
 
+	/**
+	 * The component will listen to updates from the background script for when
+	 * the number of insights found on a page updates.
+	 */
 	componentDidMount() {
 		window.chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 			if (request.type == runtimeEventsTypes.UPDATE_INSIGHTS) {
@@ -41,13 +52,19 @@ export default class Content extends React.Component {
 		
 		if (isLoading) return <Loading label={"Looking for insights..."}/>
 
-		return <InsightsDisplay numInsights={numInsights} highlight={this.highlight}/>
+		return <InsightsDisplay
+			numInsights={numInsights}
+			highlight={this.highlight}
+		/>
 	}
 
 	render() {
 		return (
 			<Layout>
-				<Grid centered padded="vertically">
+				<Grid
+					centered
+					padded="vertically"
+				>
 					<Grid.Row>
 						{ this.renderHighlightState() }
 					</Grid.Row>

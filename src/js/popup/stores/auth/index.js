@@ -4,6 +4,9 @@ import * as runtimeEvents from 'js/utils/runtimeEvents'
 
 import t from "./locale";
 
+/**
+ * The Auth store, responsible for storing and handling user authentication
+ */
 export default class Auth {
 	@observable isLoading = false
 
@@ -45,6 +48,7 @@ export default class Auth {
 	}
 
 	@action handleError(message) {
+		// The appropriate message will be set on an authentication error
 		this.setMessage({
 			body: t(message),
 			type: "error"
@@ -53,6 +57,9 @@ export default class Auth {
 		this.setIsLoading(false)
 	}
 
+	/**
+	 * Validates that the user is signed in on app rendering
+	 */
 	validate() {
 		this.setIsLoading(true)
 

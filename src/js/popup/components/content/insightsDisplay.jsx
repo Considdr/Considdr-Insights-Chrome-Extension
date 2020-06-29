@@ -5,6 +5,12 @@ import { Grid, Button } from 'semantic-ui-react'
 import styles from "styles/components/content/insightsDisplay.sass"
 import buttons from "styles/buttons.sass"
 
+/**
+ * Function component that renders the "Find Insights" button, and, if provided
+ * in the props, the number of insights found on the current page
+ * 
+ * @param {*} props
+ */
 const InsightsDisplay = (props) => {
     return(
         <Grid centered padded="vertically">

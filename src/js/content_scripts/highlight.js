@@ -249,12 +249,18 @@ function clearEndPunctuation(word, start) {
   * @return {number} - The start or end index
 */
 function findIndex(elementHTML, text, word, start) {
-	// Determine the 
+	/*
+		Determine the number of instances of either the start or end word in the
+		input text.
+	*/
 	var wordCount = (
 		text.match(new RegExp(escapePunctuation(word), 'g')) || []
 	).length
 
-	// TODO: TEST THIS. SHOULD IT JUST BE SET TO 1?????
+	/*
+		If it is the start word, add one to the instances as the count above
+		only counts the number of instances in the text prior to the insight.
+	*/
 	if (start) wordCount += 1
 
 	return nthIndex(elementHTML, word, wordCount)

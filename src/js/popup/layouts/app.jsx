@@ -8,6 +8,12 @@ import Loading from "popup/components/loading"
 
 import 'styles/layouts/app.sass'
 
+/**
+ * The App layout
+ * 
+ * The App layout is an observer of the auth store so that it
+ * automatically re-renders when relevant observables change
+ */
 @observer
 export default class App extends React.Component {
 	constructor(props) {
