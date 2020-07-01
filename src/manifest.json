@@ -3,7 +3,6 @@
   "version": "1.0",
   "description": "Automatically highlight key insights in an article",
   "permissions": [
-      "activeTab",
       "tabs",
       "cookies",
       "storage",
