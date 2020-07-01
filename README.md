@@ -8,7 +8,7 @@ This extension interfaces with Considdr's Insight API to retrieve insights for a
 
 This extension requires a Considdr account in order to log in and highlight insights. Please reach out to us at [support@considdr.com](mailto:support@considdr.com) to get demo access to the extension.
 
-**The extension is pending approval in the Chrome Web Store**
+**This extension is pending approval in the Chrome Web Store**
 
 ## Install
 
