@@ -4,7 +4,6 @@
   "description": "Automatically highlight key insights in an article",
   "permissions": [
       "tabs",
-      "cookies",
       "storage",
       "http://*/*",
       "https://*/*"
