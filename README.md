@@ -17,7 +17,7 @@ Below are some good articles to test the extension on:
 - https://phys.org/news/2020-06-black-female-principal-candidates-denied.html
 - https://www.discovermagazine.com/health/stomachache-your-gut-bacteria-might-be-to-blame
 
-The following boilerplate was used to build this project: https://github.com/samuelsimoes/chrome-extension-webpack-boilerplate
+The following boilerplate was used to build this extension: https://github.com/samuelsimoes/chrome-extension-webpack-boilerplate
 
 ## Install
 
