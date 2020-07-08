@@ -12,7 +12,7 @@ import * as runtimeEvents from 'js/utils/runtimeEvents'
 import * as highlightsRepository from 'js/repositories/highlights'
 import * as autoHighlightRepository from 'js/repositories/autoHighlight'
 
-const endpoint = wretch()
+const api = wretch()
   .url(secrets.apiEndpoint)
 
 const badgeColor = "#2d84de"
@@ -49,7 +49,7 @@ function manualHighlight () {
  */
 function autoHighlight(tabID, tabURL) {
     // Confirm that the user has been authenticated before highlighting insights
-    endpoint
+    api
         .url("/auth/sessions")
         .get()
         .res(() => {
@@ -97,7 +97,7 @@ function highlight(tabID, tabURL) {
  * @param {String} tabURL The URL of the tab for which to request insights
  */
 function getInsights(tabID, tabURL) {
-	endpoint
+	api
 		.url("/get_work_insights")
 		.query({
 			work_url: tabURL
