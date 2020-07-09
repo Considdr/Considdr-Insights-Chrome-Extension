@@ -2,6 +2,8 @@ import { observable, action } from 'mobx'
 
 import * as runtimeEvents from 'js/utils/runtimeEvents'
 
+import * as csrfRepository from 'js/repositories/csrf'
+
 import t from "./locale";
 
 /**
@@ -34,6 +36,7 @@ export default class Auth {
 	@action signInUser(body) {
 		this.setSignedIn(true)
 		this.currentUser = body.data.user
+		csrfRepository.set(body.data.csrf_token)
 		this.setMessage(null)
 		this.setIsLoading(false)
 	}
@@ -43,6 +46,7 @@ export default class Auth {
 		this.currentUser = {}
 		this.setMessage(null)
 		this.setIsLoading(false)
+		csrfRepository.clear()
 
 		runtimeEvents.signOut()
 	}
@@ -109,5 +113,6 @@ export default class Auth {
 			.res(() => {
 				this.signOutUser()
 			})
+			.catch(error => {})
 	}
 }

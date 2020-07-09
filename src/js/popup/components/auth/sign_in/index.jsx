@@ -17,7 +17,7 @@ export default class SignIn extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = { email: "", password: "" }
+    this.state = { email: "marcus@considdr.com", password: "2LbdTqCKm&nfgVl9BD6JwdY49Kj$CZTl##0z8E$u" }
   }
 
   handleChange = (e, { name, value }) => {
