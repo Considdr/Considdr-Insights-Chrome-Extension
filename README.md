@@ -1,5 +1,9 @@
 # Considdr Insights
 
+> See here for a quick write up of the project: https://mefchristiansen.github.io/projects/considdr-insights-chrome-extension/
+
+<br>
+
 A Chrome extension that highlights the key insights in documents across the web.
 
 **This extension is pending approval in the Chrome Web Store**
