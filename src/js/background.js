@@ -11,6 +11,7 @@ import * as runtimeEvents from 'js/utils/runtimeEvents'
 
 import * as highlightsRepository from 'js/repositories/highlights'
 import * as autoHighlightRepository from 'js/repositories/autoHighlight'
+import * as csrfRepository from 'js/repositories/csrf'
 
 const api = wretch()
   .url(secrets.apiEndpoint)
@@ -49,13 +50,17 @@ function manualHighlight () {
  */
 function autoHighlight(tabID, tabURL) {
     // Confirm that the user has been authenticated before highlighting insights
-    api
-        .url("/auth/sessions")
-        .get()
-        .res(() => {
-            highlight(tabID, tabURL)
-        })
-        .catch(() => {})
+
+    csrfRepository.get((csrf_token) => {
+        api
+            .url("/auth/sessions")
+            .headers({"x-csrf-token": csrf_token})
+            .get()
+            .res(() => {
+                highlight(tabID, tabURL)
+            })
+            .catch(() => {})
+    })
 }
 
 /**
@@ -97,25 +102,29 @@ function highlight(tabID, tabURL) {
  * @param {String} tabURL The URL of the tab for which to request insights
  */
 function getInsights(tabID, tabURL) {
-	api
-		.url("/get_work_insights")
-		.query({
-			work_url: tabURL
-		})
-		.get()
-		.json(json => {
-			processResponse(tabID, tabURL, json)
-		})
-		.catch(() => {
-            /*
-                If there was an error getting insights from the API, set the
-                URL's valid insights to an empty array
-            */
-			highlightsRepository.persist(tabURL, [], function() {
-				updateBadge(tabURL)
-                runtimeEvents.updateInsights()
-			})
-		})
+
+    csrfRepository.get((csrf_token) => {
+        api
+            .url("/get_work_insights")
+            .headers({"x-csrf-token": csrf_token})
+            .query({
+                work_url: tabURL
+            })
+            .get()
+            .json(json => {
+                processResponse(tabID, tabURL, json)
+            })
+            .catch(() => {
+                /*
+                    If there was an error getting insights from the API, set the
+                    URL's valid insights to an empty array
+                */
+                highlightsRepository.persist(tabURL, [], function() {
+                    updateBadge(tabURL)
+                    runtimeEvents.updateInsights()
+                })
+            })
+    })
 }
 
 /**
